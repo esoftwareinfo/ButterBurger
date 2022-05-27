@@ -45,15 +45,14 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
 
     public void showAdIfAvailable() {
-        // Only show ad if there is not already an app open ad currently showing
-        // and an ad is available.
+
         if (!isShowingAd && isAdAvailable()) {
 
             FullScreenContentCallback fullScreenContentCallback =
                     new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
-                            // Set the reference to null so isAdAvailable() returns false.
+
                             AppOpenManager.this.appOpenAd = null;
                             isShowingAd = false;
                             Check = 1;

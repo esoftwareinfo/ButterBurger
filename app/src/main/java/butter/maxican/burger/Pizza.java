@@ -128,7 +128,6 @@ public class Pizza {
     StartAppAd.AdMode SO_VIDEO = StartAppAd.AdMode.VIDEO;
     StartAppAd.AdMode SO_REWARDED_VIDEO = StartAppAd.AdMode.REWARDED_VIDEO;
 
-    //AppOpen
     public AppOpenAd.AppOpenAdLoadCallback loadCallback;
     public AppOpenAd.AppOpenAdLoadCallback loadCallback1;
     public AppOpenAd.AppOpenAdLoadCallback loadCallback2;

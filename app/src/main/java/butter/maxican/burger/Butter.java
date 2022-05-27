@@ -5,8 +5,6 @@ import android.content.Context;
 public class Butter {
 
 
-    /*Application Ads ID*/
-
     private static final String TX = "tx";
 
     public static void settx(Context Context, String string) {

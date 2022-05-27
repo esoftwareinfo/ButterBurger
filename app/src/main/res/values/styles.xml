@@ -1,14 +1,4 @@
 <resources>
 
 
-    <style name="AppBaseTheme_Butter" parent="android:Theme.Light">
-
-    </style>
-
-
-    <style name="AppTheme_Butter" parent="AppBaseTheme_Butter">
-
-    </style>
-
-
 </resources>

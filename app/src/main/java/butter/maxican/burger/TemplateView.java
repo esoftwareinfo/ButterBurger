@@ -214,7 +214,7 @@ public class TemplateView extends FrameLayout {
         primaryView.setText(headline);
         callToActionView.setText(cta);
 
-        //  Set the secondary view to be the star rating if available.
+
         if (starRating != null && starRating > 0) {
             secondaryView.setVisibility(GONE);
             ratingBar.setVisibility(VISIBLE);

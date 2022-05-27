@@ -50,8 +50,7 @@ public class AppOpenManager_Exclude implements Application.ActivityLifecycleCall
 
 
     public void showAdIfAvailable() {
-        // Only show ad if there is not already an app open ad currently showing
-        // and an ad is available.
+
         if (!isShowingAd && isAdAvailable()) {
 
 
@@ -59,7 +58,7 @@ public class AppOpenManager_Exclude implements Application.ActivityLifecycleCall
                     new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
-                            // Set the reference to null so isAdAvailable() returns false.
+
                             AppOpenManager_Exclude.this.appOpenAd = null;
                             isShowingAd = false;
                             Check = 1;
@@ -99,7 +98,7 @@ public class AppOpenManager_Exclude implements Application.ActivityLifecycleCall
                         return;
                     }
 
-                    // Have unused ad, no need to fetch another.
+
                     if (isAdAvailable()) {
                         return;
                     }
