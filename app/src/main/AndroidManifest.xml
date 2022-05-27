@@ -11,13 +11,11 @@
     <application
 
 
-        xmlns:tools="http://schemas.android.com/tools"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        tools:replace="android:label,android:allowBackup"
 
         >
 
