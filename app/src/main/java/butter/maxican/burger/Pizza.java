@@ -1800,7 +1800,7 @@ public class Pizza {
 
             int[] Progreesssss = new int[]{R.drawable.roating_loading1, R.drawable.roating_loading2, R.drawable.roating_loading3, R.drawable.roating_loading4
                     , R.drawable.roating_loading5, R.drawable.roating_loading6, R.drawable.roating_loading7, R.drawable.roating_loading8, R.drawable.roating_loading9
-                    , R.drawable.roating_loading10, R.drawable.roating_loading11, R.drawable.roating_loading12, R.drawable.roating_loading14};
+                    , R.drawable.roating_loading10, R.drawable.roating_loading11, R.drawable.roating_loading12, R.drawable.roating_loading13, R.drawable.roating_loading14};
 
 
             progressBar.setIndeterminateDrawable(ads_context.getResources().getDrawable(Progreesssss[Proress_Set_Number]));
