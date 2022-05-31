@@ -136,6 +136,13 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
                                 @Override
                                 public void onAppOpenAdLoaded(AppOpenAd ad) {
+
+                                    if ((Butter.getSetup(myApplication)).equals("1")) {
+                                        Check = 1;
+                                    } else if ((Butter.getSetup(myApplication)).equals("0")) {
+                                        Check = 0;
+                                    }
+
                                     AppOpenManager.this.appOpenAd = ad;
                                 }
 
@@ -147,6 +154,9 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
                                     if ((Butter.getSetup(myApplication)).equals("1")) {
                                         Check = Check + 1;
+                                        fetchAd();
+                                    } else if ((Butter.getSetup(myApplication)).equals("0")) {
+                                        Check = 0;
                                         fetchAd();
                                     }
 

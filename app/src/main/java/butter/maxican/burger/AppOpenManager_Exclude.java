@@ -142,6 +142,13 @@ public class AppOpenManager_Exclude implements Application.ActivityLifecycleCall
 
                                 @Override
                                 public void onAppOpenAdLoaded(AppOpenAd ad) {
+
+                                    if ((Butter.getSetup(myApplication)).equals("1")) {
+                                        Check = 1;
+                                    } else if ((Butter.getSetup(myApplication)).equals("0")) {
+                                        Check = 0;
+                                    }
+
                                     AppOpenManager_Exclude.this.appOpenAd = ad;
                                 }
 
@@ -153,6 +160,9 @@ public class AppOpenManager_Exclude implements Application.ActivityLifecycleCall
 
                                     if ((Butter.getSetup(myApplication)).equals("1")) {
                                         Check = Check + 1;
+                                        fetchAd();
+                                    } else if ((Butter.getSetup(myApplication)).equals("0")) {
+                                        Check = 0;
                                         fetchAd();
                                     }
 
