@@ -160,7 +160,6 @@ public class FancyGifDialog {
             dialog.setContentView(R.layout.fancygifdialog);
 
 
-
             title1 = dialog.findViewById(R.id.title);
             message1 = dialog.findViewById(R.id.message);
             nBtn = dialog.findViewById(R.id.negativeBtn);

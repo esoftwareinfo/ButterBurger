@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -88,6 +89,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import pl.droidsonroids.gif.GifImageView;
+
 
 public class Pizza {
 
@@ -95,7 +98,7 @@ public class Pizza {
     AdView mAdView, mAdView_exit;
     public InterstitialAd Splash_InterstialAd, InterstialAd, InterstialAd1;
 
-    public InterstitialAd InterstialAd_Setup3, InterstialAd_Setup2, InterstialAd_Setup1;
+    public InterstitialAd InterstialAd_Setup;
     int Inter_Setup, App_Open_Setup;
 
     public RewardedAd mRewardedAd;
@@ -108,9 +111,10 @@ public class Pizza {
     String Interstial, Interstial1, Interstial2;
     String Banner, Banner1, Banner2;
 
-    //String Native_ID;
 
-    String Native_ID, Native_ID1, Native_ID2;
+    String Native_ID_Exit, Native_ID1, Native_ID2;
+
+    String Native_ID;
 
     String APP_ID, APP_OPEN, REWARD, INTER_REWARD, EXTRA1, EXTRA2;
 
@@ -128,22 +132,21 @@ public class Pizza {
     StartAppAd.AdMode SO_VIDEO = StartAppAd.AdMode.VIDEO;
     StartAppAd.AdMode SO_REWARDED_VIDEO = StartAppAd.AdMode.REWARDED_VIDEO;
 
+
     public AppOpenAd.AppOpenAdLoadCallback loadCallback;
     public AppOpenAd.AppOpenAdLoadCallback loadCallback1;
     public AppOpenAd.AppOpenAdLoadCallback loadCallback2;
     public AppOpenAd.AppOpenAdLoadCallback loadCallback3;
     private static boolean isShowingAd = false;
-    private static boolean isShowingAd1 = false;
-    private static boolean isShowingAd2 = false;
-    private static boolean isShowingAd3 = false;
+
     private AppOpenAd appOpenAd = null;
-    private AppOpenAd appOpenAd1 = null;
-    private AppOpenAd appOpenAd2 = null;
-    private AppOpenAd appOpenAd3 = null;
+
 
     public static int Server_Yes_No = 1000;
 
     public int Which_Banner;
+    public int Which_Native_Exit;
+
     public int Which_Native;
 
     int Native_Load = 1000;
@@ -167,9 +170,14 @@ public class Pizza {
 
     AdView Pre_Load_mAdView;
     int Banner_Load_Not = 5;
+    TappxBanner Pre_Tappxbanner_Exit;
+
     TappxBanner Pre_Tappxbanner;
 
+    TemplateView Pre_Load_Native_templateView_Exit;
     TemplateView Pre_Load_Native_templateView;
+    int Native_Load_Not_Exit = 5;
+
     int Native_Load_Not = 5;
 
     ConnectivityManager connec;
@@ -190,8 +198,17 @@ public class Pizza {
     public static int Exit_Menu_Decided = 0, Setup_Main = 0;
     Boolean doubleBackToExitPressedOnce = false;
 
+    public static String AL_Banner = "";
+    public static String AL_MREC_Banner = "";
+    public static String AL_Interrrr = "";
+    public static String AL_Native_Small = "";
+    public static String AL_Native_Medium = "";
+    public static String AL_Reward_Video = "";
+
+    GifImageView gifImageView;
+
     public interface OnRewardgetListner {
-        public void OnReward(boolean b);   //method, which can have parameters
+        public void OnReward(boolean b);
     }
 
 
@@ -248,7 +265,6 @@ public class Pizza {
 
             Exit_Menu_Decided = 0;
         }
-
 
         Tx_ID = Tx_id;
 
@@ -309,8 +325,42 @@ public class Pizza {
 
     }
 
+    public void Get_IDs_AL(String aL_Banner, String aL_MREC_Banner, String aL_Interrrr, String aL_Native_Small, String aL_Native_Medium, String aL_Reward_Video) {
+
+        AL_Banner = "" + aL_Banner;
+        AL_MREC_Banner = "" + aL_MREC_Banner;
+        AL_Interrrr = "" + aL_Interrrr;
+        AL_Native_Small = "" + aL_Native_Small;
+        AL_Native_Medium = "" + aL_Native_Medium;
+        AL_Reward_Video = "" + aL_Reward_Video;
+
+    }
+
 
     public void Pre_Banner_Load(final int Which_Banner_Load) {
+
+        if ((Butter.getSetup(Contextt)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
+
+            Pre_Banner_Load_Setup1(Which_Banner_Load);
+
+        } else if ((Butter.getSetup(Contextt)).equals("0")) {
+
+            Pre_Banner_Load_Normal(Which_Banner_Load);
+
+        }
+
+    }
+
+    public void Pre_Banner_Load_Normal(final int Which_Banner_Load) {
 
         if (Butter.getbanner(Contextt) == 0) {
 
@@ -357,7 +407,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
                 super.onAdLoaded();
 
                 Butter.setsplashcount(Contextt, 0);
@@ -368,10 +418,594 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
                 super.onAdFailedToLoad(errorCode);
 
                 Banner_Load_Not = 0;
+
+                Pre_Banner_Load_Tappx_Decided(Which_Banner_Load);
+
+            }
+
+        });
+
+    }
+
+    public void Pre_Banner_Load_Setup1(final int Which_Banner_Load) {
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 1;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                Pre_Banner_Load_Setup11(Which_Banner_Load);
+
+                if ((Butter.getSetup(Contextt)).equals("1")) {
+                    Pre_Banner_Load_Setup22(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("2")) {
+                    Pre_Banner_Load_Setup11111(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("3")) {
+                    Pre_Banner_Load_Setup1111(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("4")) {
+                    Pre_Banner_Load_Setup111(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("5")) {
+                    Pre_Banner_Load_Setup11(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("6")) {
+                    Pre_Banner_Load_Setup2(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("7")) {
+                    Pre_Banner_Load_Setup11111(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("8")) {
+                    Pre_Banner_Load_Setup1111(Which_Banner);
+                }
+
+            }
+
+        });
+
+    }
+
+    public void Pre_Banner_Load_Setup11(final int Which_Banner_Load) {
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 11;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                Pre_Banner_Load_Setup111(Which_Banner_Load);
+
+            }
+
+        });
+
+    }
+
+    public void Pre_Banner_Load_Setup111(final int Which_Banner_Load) {
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 111;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                Pre_Banner_Load_Setup1111(Which_Banner_Load);
+
+            }
+
+        });
+
+    }
+
+    public void Pre_Banner_Load_Setup1111(final int Which_Banner_Load) {
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 1111;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                Pre_Banner_Load_Setup11111(Which_Banner_Load);
+
+            }
+
+        });
+
+    }
+
+    public void Pre_Banner_Load_Setup11111(final int Which_Banner_Load) {
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 11111;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                Pre_Banner_Load_Setup2(Which_Banner_Load);
+
+            }
+
+        });
+
+    }
+
+    public void Pre_Banner_Load_Setup2(final int Which_Banner_Load) {
+
+        if (Butter.getBB2(Contextt) == 0) {
+
+            Banner = Butter.getB22(Contextt);
+
+            Butter.setBB2(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB222(Contextt);
+
+            Butter.setBB2(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 2;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                Pre_Banner_Load_Setup22(Which_Banner_Load);
+
+            }
+
+        });
+
+    }
+
+    public void Pre_Banner_Load_Setup22(final int Which_Banner_Load) {
+
+        if (Butter.getBB2(Contextt) == 0) {
+
+            Banner = Butter.getB22(Contextt);
+
+            Butter.setBB2(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB222(Contextt);
+
+            Butter.setBB2(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 22;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                Pre_Banner_Load_Setup3(Which_Banner_Load);
+
+            }
+
+        });
+
+    }
+
+    public void Pre_Banner_Load_Setup3(final int Which_Banner_Load) {
+
+        if (Butter.getBB3(Contextt) == 0) {
+
+            Banner = Butter.getB33(Contextt);
+
+            Butter.setBB3(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB333(Contextt);
+
+            Butter.setBB3(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 3;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
 
                 Pre_Banner_Load_Tappx_Decided(Which_Banner_Load);
 
@@ -448,22 +1082,46 @@ public class Pizza {
 
     }
 
-    public void Pre_Banner_Show_Decided(final RelativeLayout Ad_Layout,
-                                        final int Banner_Type) {
+    public void Pre_Banner_Show_Normal(final RelativeLayout Ad_Layout,
+                                       final int Banner_Type) {
 
         if (Banner_Load_Not == 1) {
-
             try {
-
                 Ad_Layout.addView(Pre_Load_mAdView);
+            } catch (Exception e) {
 
-                RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
-                        .getLayoutParams();
-                relativeParams.setMargins(0, 10, 0, 0);
-                Ad_Layout.setLayoutParams(relativeParams);
+            }
+        }
+
+        if (Banner_Load_Not == 0) {
+            try {
+                Ad_Layout.addView(Pre_Tappxbanner);
 
             } catch (Exception e) {
-                // TODO: handle exception
+
+            }
+        }
+
+    }
+
+    public void Pre_Banner_Show_Setup(final RelativeLayout Ad_Layout,
+                                      final int Banner_Type) {
+
+        if (Banner_Load_Not == 1 ||
+                Banner_Load_Not == 11 ||
+                Banner_Load_Not == 111 ||
+                Banner_Load_Not == 1111 ||
+                Banner_Load_Not == 11111 ||
+                Banner_Load_Not == 2 ||
+                Banner_Load_Not == 22) {
+
+            try {
+                if (Pre_Load_mAdView != null) {
+                    Ad_Layout.addView(Pre_Load_mAdView);
+                }
+
+            } catch (Exception e) {
+
             }
 
         }
@@ -471,21 +1129,42 @@ public class Pizza {
         if (Banner_Load_Not == 0) {
 
             try {
-
-                Ad_Layout.addView(Pre_Tappxbanner);
-
-                RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
-                        .getLayoutParams();
-                relativeParams.setMargins(0, 10, 0, 0);
-                Ad_Layout.setLayoutParams(relativeParams);
+                if (Pre_Tappxbanner != null) {
+                    Ad_Layout.addView(Pre_Tappxbanner);
+                }
 
             } catch (Exception e) {
-                // TODO: handle exception
+
             }
 
         }
 
     }
+
+    public void Pre_Banner_Show_Decided(final RelativeLayout Ad_Layout,
+                                        final int Banner_Type) {
+
+        if ((Butter.getSetup(Contextt)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
+
+            Pre_Banner_Show_Setup(Ad_Layout, Banner_Type);
+
+        } else if ((Butter.getSetup(Contextt)).equals("0")) {
+
+            Pre_Banner_Show_Normal(Ad_Layout, Banner_Type);
+
+        }
+
+    }
+
 
     public void Banner_Pre_Load(final int Which_Banner_Load) {
 
@@ -504,7 +1183,16 @@ public class Pizza {
                     if (Server_Yes_No == 1 || Server_Yes_No == 0) {
 
 
-                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                        if ((Butter.getSetup(Contextt)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
 
                             Banner_Pre_Load_Setup1(Which_Banner_Load);
 
@@ -537,7 +1225,16 @@ public class Pizza {
             return;
         }
 
-        if ((Butter.getSetup(Contextt)).equals("1")) {
+        if ((Butter.getSetup(Contextt)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
 
             Banner_Show_Setup(Ad_Layout);
 
@@ -598,7 +1295,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
                 super.onAdLoaded();
 
                 Butter.setsplashcount(Contextt, 0);
@@ -609,7 +1306,7 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
                 super.onAdFailedToLoad(errorCode);
 
 
@@ -706,7 +1403,7 @@ public class Pizza {
 
 
             } catch (Exception e) {
-                // TODO: handle exception
+
             }
 
         }
@@ -723,7 +1420,7 @@ public class Pizza {
 
 
             } catch (Exception e) {
-                // TODO: handle exception
+
             }
 
         }
@@ -782,7 +1479,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
                 super.onAdLoaded();
 
                 Butter.setsplashcount(Contextt, 0);
@@ -793,7 +1490,326 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
+                super.onAdFailedToLoad(errorCode);
+
+
+                if ((Butter.getSetup(Contextt)).equals("1")) {
+                    Banner_Pre_Load_Setup22(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("2")) {
+                    Banner_Pre_Load_Setup11111(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("3")) {
+                    Banner_Pre_Load_Setup1111(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("4")) {
+                    Banner_Pre_Load_Setup111(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("5")) {
+                    Banner_Pre_Load_Setup11(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("6")) {
+                    Banner_Pre_Load_Setup2(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("7")) {
+                    Banner_Pre_Load_Setup11111(Which_Banner);
+                }
+
+                if ((Butter.getSetup(Contextt)).equals("8")) {
+                    Banner_Pre_Load_Setup1111(Which_Banner);
+                }
+
+
+            }
+
+        });
+
+    }
+
+    public void Banner_Pre_Load_Setup11(final int Which_Banner_Load) {
+
+        Which_Banner = Which_Banner_Load;
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 11;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                Banner_Pre_Load_Setup111(Which_Banner);
+
+
+            }
+
+        });
+
+    }
+
+    public void Banner_Pre_Load_Setup111(final int Which_Banner_Load) {
+
+        Which_Banner = Which_Banner_Load;
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 111;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                Banner_Pre_Load_Setup1111(Which_Banner);
+
+
+            }
+
+        });
+
+    }
+
+    public void Banner_Pre_Load_Setup1111(final int Which_Banner_Load) {
+
+        Which_Banner = Which_Banner_Load;
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 1111;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                Banner_Pre_Load_Setup11111(Which_Banner);
+
+
+            }
+
+        });
+
+    }
+
+    public void Banner_Pre_Load_Setup11111(final int Which_Banner_Load) {
+
+        Which_Banner = Which_Banner_Load;
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 11111;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
                 super.onAdFailedToLoad(errorCode);
 
                 Banner_Pre_Load_Setup2(Which_Banner);
@@ -854,7 +1870,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
                 super.onAdLoaded();
 
                 Butter.setsplashcount(Contextt, 0);
@@ -865,7 +1881,79 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
+                super.onAdFailedToLoad(errorCode);
+
+                Banner_Pre_Load_Setup22(Which_Banner);
+
+
+            }
+
+        });
+
+    }
+
+    public void Banner_Pre_Load_Setup22(final int Which_Banner_Load) {
+
+        Which_Banner = Which_Banner_Load;
+
+        if (Butter.getBB2(Contextt) == 0) {
+
+            Banner = Butter.getB22(Contextt);
+
+            Butter.setBB2(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB222(Contextt);
+
+            Butter.setBB2(Contextt, 0);
+
+        }
+
+        Pre_Load_mAdView = new AdView(Contextt);
+
+        if (Which_Banner_Load == 4) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+
+        } else if (Which_Banner_Load == 3) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 2) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.LARGE_BANNER);
+
+        } else if (Which_Banner_Load == 1) {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        } else {
+
+            Pre_Load_mAdView.setAdSize(AdSize.BANNER);
+
+        }
+
+        Pre_Load_mAdView.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        Pre_Load_mAdView.loadAd(adore);
+        Pre_Load_mAdView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+                super.onAdLoaded();
+
+                Butter.setsplashcount(Contextt, 0);
+
+                Banner_Load_Not = 22;
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
                 super.onAdFailedToLoad(errorCode);
 
                 Banner_Pre_Load_Setup3(Which_Banner);
@@ -926,7 +2014,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
                 super.onAdLoaded();
 
                 Butter.setsplashcount(Contextt, 0);
@@ -937,7 +2025,7 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
                 super.onAdFailedToLoad(errorCode);
 
                 Pre_Banner_Load_Tappx_Normal(Which_Banner_Load);
@@ -958,6 +2046,7 @@ public class Pizza {
 
                 if (Pre_Load_mAdView != null) {
 
+                    Log.e("P 1", "P 1");
                     Ad_Layout.removeAllViews();
                     Ad_Layout.addView(Pre_Load_mAdView);
 
@@ -965,10 +2054,83 @@ public class Pizza {
 
 
             } catch (Exception e) {
-                // TODO: handle exception
+
             }
 
         }
+        if (Banner_Load_Not == 11) {
+
+            try {
+
+                if (Pre_Load_mAdView != null) {
+
+                    Log.e("P 11", "P 11");
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.addView(Pre_Load_mAdView);
+
+                }
+
+
+            } catch (Exception e) {
+
+            }
+
+        }
+        if (Banner_Load_Not == 111) {
+
+            try {
+
+                if (Pre_Load_mAdView != null) {
+
+                    Log.e("P 111", "P 111");
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.addView(Pre_Load_mAdView);
+
+                }
+
+
+            } catch (Exception e) {
+
+            }
+
+        }
+        if (Banner_Load_Not == 1111) {
+
+            try {
+
+                if (Pre_Load_mAdView != null) {
+
+                    Log.e("P 1111", "P 1111");
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.addView(Pre_Load_mAdView);
+
+                }
+
+
+            } catch (Exception e) {
+
+            }
+
+        }
+        if (Banner_Load_Not == 11111) {
+
+            try {
+
+                if (Pre_Load_mAdView != null) {
+
+                    Log.e("P 11111", "P 11111");
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.addView(Pre_Load_mAdView);
+
+                }
+
+
+            } catch (Exception e) {
+
+            }
+
+        }
+
 
         if (Banner_Load_Not == 2) {
 
@@ -976,6 +2138,7 @@ public class Pizza {
 
                 if (Pre_Load_mAdView != null) {
 
+                    Log.e("P 2", "P 2");
                     Ad_Layout.removeAllViews();
                     Ad_Layout.addView(Pre_Load_mAdView);
 
@@ -983,7 +2146,26 @@ public class Pizza {
 
 
             } catch (Exception e) {
-                // TODO: handle exception
+
+            }
+
+        }
+
+        if (Banner_Load_Not == 22) {
+
+            try {
+
+                if (Pre_Load_mAdView != null) {
+
+                    Log.e("P 22", "P 22");
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.addView(Pre_Load_mAdView);
+
+                }
+
+
+            } catch (Exception e) {
+
             }
 
         }
@@ -994,6 +2176,7 @@ public class Pizza {
 
                 if (Pre_Load_mAdView != null) {
 
+                    Log.e("P 3", "P 3");
                     Ad_Layout.removeAllViews();
                     Ad_Layout.addView(Pre_Load_mAdView);
 
@@ -1001,7 +2184,7 @@ public class Pizza {
 
 
             } catch (Exception e) {
-                // TODO: handle exception
+
             }
 
         }
@@ -1012,6 +2195,7 @@ public class Pizza {
 
                 if (Pre_Tappxbanner != null) {
 
+                    Log.e("T", "T");
                     Ad_Layout.removeAllViews();
                     Ad_Layout.addView(Pre_Tappxbanner);
 
@@ -1019,7 +2203,7 @@ public class Pizza {
 
 
             } catch (Exception e) {
-                // TODO: handle exception
+
             }
 
         }
@@ -1028,6 +2212,7 @@ public class Pizza {
 
 
     }
+
 
     public void Native_Pre_Load(final int Which_Native_Load) {
 
@@ -1045,7 +2230,16 @@ public class Pizza {
 
                     if (Server_Yes_No == 1 || Server_Yes_No == 0) {
 
-                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                        if ((Butter.getSetup(Contextt)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
 
                             Native_Pre_Load_Setup1(Which_Native_Load);
 
@@ -1174,6 +2368,267 @@ public class Pizza {
                     @Override
                     public void onAdFailedToLoad(LoadAdError adError) {
 
+
+                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                            Native_Pre_Load_Setup22(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("2")) {
+                            Native_Pre_Load_Setup11111(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("3")) {
+                            Native_Pre_Load_Setup1111(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("4")) {
+                            Native_Pre_Load_Setup111(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("5")) {
+                            Native_Pre_Load_Setup11(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("6")) {
+                            Native_Pre_Load_Setup2(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("7")) {
+                            Native_Pre_Load_Setup11111(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("8")) {
+                            Native_Pre_Load_Setup1111(Which_Native_Load);
+                        }
+
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup11(final int Which_Native_Load) {
+
+        Which_Native = Which_Native_Load;
+
+        if (Butter.getNN1(Contextt) == 0) {
+
+            Native_ID = Butter.getN11(Contextt);
+
+            Butter.setNN1(Contextt, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(Contextt);
+
+            Butter.setNN1(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView.setStyles(styles);
+                        Pre_Load_Native_templateView.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not = 11;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Native_Pre_Load_Setup111(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup111(final int Which_Native_Load) {
+
+        Which_Native = Which_Native_Load;
+
+        if (Butter.getNN1(Contextt) == 0) {
+
+            Native_ID = Butter.getN11(Contextt);
+
+            Butter.setNN1(Contextt, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(Contextt);
+
+            Butter.setNN1(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView.setStyles(styles);
+                        Pre_Load_Native_templateView.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not = 111;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Native_Pre_Load_Setup1111(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup1111(final int Which_Native_Load) {
+
+        Which_Native = Which_Native_Load;
+
+        if (Butter.getNN1(Contextt) == 0) {
+
+            Native_ID = Butter.getN11(Contextt);
+
+            Butter.setNN1(Contextt, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(Contextt);
+
+            Butter.setNN1(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView.setStyles(styles);
+                        Pre_Load_Native_templateView.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not = 1111;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Native_Pre_Load_Setup11111(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup11111(final int Which_Native_Load) {
+
+        Which_Native = Which_Native_Load;
+
+        if (Butter.getNN1(Contextt) == 0) {
+
+            Native_ID = Butter.getN11(Contextt);
+
+            Butter.setNN1(Contextt, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(Contextt);
+
+            Butter.setNN1(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView.setStyles(styles);
+                        Pre_Load_Native_templateView.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not = 11111;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
                         Native_Pre_Load_Setup2(Which_Native_Load);
 
                     }
@@ -1188,6 +2643,65 @@ public class Pizza {
     }
 
     public void Native_Pre_Load_Setup2(final int Which_Native_Load) {
+
+        Which_Native = Which_Native_Load;
+
+        if (Butter.getNN2(Contextt) == 0) {
+
+            Native_ID = Butter.getN22(Contextt);
+
+            Butter.setNN2(Contextt, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN222(Contextt);
+
+            Butter.setNN2(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView.setStyles(styles);
+                        Pre_Load_Native_templateView.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not = 2;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Native_Pre_Load_Setup22(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup22(final int Which_Native_Load) {
 
         Which_Native = Which_Native_Load;
 
@@ -1359,6 +2873,7 @@ public class Pizza {
 
             if (Pre_Load_Native_templateView != null) {
 
+                Log.e("NT", "NT");
 
                 try {
 
@@ -1368,7 +2883,7 @@ public class Pizza {
                     Native_Pre_Load_Normal(Which_Native);
 
                 } catch (Exception e) {
-                    // TODO: handle exception
+
                 }
 
 
@@ -1379,6 +2894,7 @@ public class Pizza {
 
             if (Pre_Tappxbanner != null) {
 
+                Log.e("TXXXX", "TXXXX");
 
                 try {
 
@@ -1388,7 +2904,7 @@ public class Pizza {
                     Native_Pre_Load_Normal(Which_Native);
 
                 } catch (Exception e) {
-                    // TODO: handle exception
+
                 }
 
 
@@ -1403,6 +2919,7 @@ public class Pizza {
 
             if (Pre_Load_Native_templateView != null) {
 
+                Log.e("NT 1", "NT 1");
 
                 try {
 
@@ -1412,7 +2929,87 @@ public class Pizza {
                     Native_Pre_Load_Setup1(Which_Native);
 
                 } catch (Exception e) {
-                    // TODO: handle exception
+
+                }
+
+
+            }
+        }
+        if (Native_Load_Not == 11) {
+
+            if (Pre_Load_Native_templateView != null) {
+
+                Log.e("NT 11", "NT 11");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView);
+                    Native_Pre_Load_Setup1(Which_Native);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+        if (Native_Load_Not == 111) {
+
+            if (Pre_Load_Native_templateView != null) {
+
+                Log.e("NT 111", "NT 111");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView);
+                    Native_Pre_Load_Setup1(Which_Native);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+        if (Native_Load_Not == 1111) {
+
+            if (Pre_Load_Native_templateView != null) {
+
+                Log.e("NT 1111", "NT 1111");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView);
+                    Native_Pre_Load_Setup1(Which_Native);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+        if (Native_Load_Not == 11111) {
+
+            if (Pre_Load_Native_templateView != null) {
+
+                Log.e("NT 11111", "NT 11111");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView);
+                    Native_Pre_Load_Setup1(Which_Native);
+
+                } catch (Exception e) {
+
                 }
 
 
@@ -1423,6 +3020,7 @@ public class Pizza {
 
             if (Pre_Load_Native_templateView != null) {
 
+                Log.e("NT 2", "NT 2");
 
                 try {
 
@@ -1432,7 +3030,28 @@ public class Pizza {
                     Native_Pre_Load_Setup1(Which_Native);
 
                 } catch (Exception e) {
-                    // TODO: handle exception
+
+                }
+
+
+            }
+        }
+
+        if (Native_Load_Not == 22) {
+
+            if (Pre_Load_Native_templateView != null) {
+
+                Log.e("NT 22", "NT 22");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView);
+                    Native_Pre_Load_Setup1(Which_Native);
+
+                } catch (Exception e) {
+
                 }
 
 
@@ -1443,6 +3062,7 @@ public class Pizza {
 
             if (Pre_Load_Native_templateView != null) {
 
+                Log.e("NT 3", "NT 3");
 
                 try {
 
@@ -1452,7 +3072,7 @@ public class Pizza {
                     Native_Pre_Load_Setup1(Which_Native);
 
                 } catch (Exception e) {
-                    // TODO: handle exception
+
                 }
 
 
@@ -1463,6 +3083,7 @@ public class Pizza {
 
             if (Pre_Tappxbanner != null) {
 
+                Log.e("TX 4", "TX 4");
 
                 try {
 
@@ -1472,7 +3093,7 @@ public class Pizza {
                     Native_Pre_Load_Setup1(Which_Native);
 
                 } catch (Exception e) {
-                    // TODO: handle exception
+
                 }
 
 
@@ -1488,7 +3109,16 @@ public class Pizza {
             return;
         }
 
-        if ((Butter.getSetup(Contextt)).equals("1")) {
+        if ((Butter.getSetup(Contextt)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
 
             Native_Show_Setup(Ad_Layout);
 
@@ -1500,6 +3130,7 @@ public class Pizza {
 
 
     }
+
 
     @SuppressLint({"NewApi", "SetJavaScriptEnabled"})
     public void Splash_Icon(String App_Name, int Text_Color, int icLauncher,
@@ -1526,7 +3157,7 @@ public class Pizza {
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
-                    // nothing;
+
                 }
             });
 
@@ -1540,12 +3171,12 @@ public class Pizza {
             float[] hsv = new float[3];
             int color = Text_Color;
             Color.colorToHSV(color, hsv);
-            hsv[2] *= 0.175f; // value component
+            hsv[2] *= 0.175f;
             color = Color.HSVToColor(hsv);
 
 
             final RelativeLayout RL = new RelativeLayout(ads_context);
-            //RL.setBackgroundColor(color);
+
 
             int colorFrom = ads_context.getResources().getColor(R.color.black);
             int colorTo = color;
@@ -1575,7 +3206,7 @@ public class Pizza {
                 back.setVerticalScrollBarEnabled(false);
                 back.setHorizontalScrollBarEnabled(false);
 
-                if (animation_type == 0) { // Random Animation
+                if (animation_type == 0) {
 
                     int animation_type_Ggenrate = (new Random().nextInt((20 - 1) + 1) + 1);
 
@@ -1663,7 +3294,7 @@ public class Pizza {
 
                     }
 
-                } else { // Selected Animation 1 to 10
+                } else {
                     back.loadUrl("file:///android_asset/background/a" + animation_type + "/index.html");
 
                     if (animation_type == 1) {
@@ -1820,7 +3451,16 @@ public class Pizza {
 
                     if (Server_Yes_No == 1 || Server_Yes_No == 0) {
 
-                        if ((Butter.getSetup(ads_context)).equals("1")) {
+                        if ((Butter.getSetup(ads_context)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
 
                             Splash_Interstial_Setup1(builder, ads_context);
 
@@ -1846,7 +3486,7 @@ public class Pizza {
     }
 
     private void Splash_Popup_Dissmiss(final Dialog builder) {
-        // TODO Auto-generated method stub
+
 
         new Handler().postDelayed(new Runnable() {
 
@@ -1898,6 +3538,7 @@ public class Pizza {
                 public void onAdLoaded() {
                     super.onAdLoaded();
 
+                    Log.e("Fail Splsh Inter", "Fail Splsh Inter");
 
                     Splash_InterstialAd.show();
 
@@ -1926,6 +3567,286 @@ public class Pizza {
 
     public void Splash_Interstial_Setup1(final Dialog builder, final Context mContext) {
 
+        Log.e("Splsh Inter 1", "Splsh Inter 1");
+
+        if (Exit_Menu_Decided == 100) {
+
+            Splash_Popup_Dissmiss(builder);
+            return;
+        }
+
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            Splash_InterstialAd = new InterstitialAd(mContext);
+            Splash_InterstialAd.setAdUnitId(Interstial);
+
+            Splash_InterstialAd.loadAd(adRequest);
+
+            Splash_InterstialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+
+                    Splash_InterstialAd.show();
+
+                    Butter.setsplashcount(mContext, 0);
+
+                    Splash_Popup_Dissmiss(builder);
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+
+                    Splash_InterstialAd = null;
+
+                    if ((Butter.getSetup(Contextt)).equals("1")) {
+                        Splash_Interstial_Setup22(builder, mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("2")) {
+                        Splash_Interstial_Setup11111(builder, mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("3")) {
+                        Splash_Interstial_Setup1111(builder, mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("4")) {
+                        Splash_Interstial_Setup111(builder, mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("5")) {
+                        Splash_Interstial_Setup11(builder, mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("6")) {
+                        Splash_Interstial_Setup2(builder, mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("7")) {
+                        Splash_Interstial_Setup11111(builder, mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("8")) {
+                        Splash_Interstial_Setup1111(builder, mContext);
+                    }
+
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Splash_Interstial_Setup11(final Dialog builder, final Context mContext) {
+
+        Log.e("Splsh Inter 11", "Splsh Inter 11");
+
+        if (Exit_Menu_Decided == 100) {
+
+            Splash_Popup_Dissmiss(builder);
+            return;
+        }
+
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            Splash_InterstialAd = new InterstitialAd(mContext);
+            Splash_InterstialAd.setAdUnitId(Interstial);
+
+            Splash_InterstialAd.loadAd(adRequest);
+
+            Splash_InterstialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+
+                    Splash_InterstialAd.show();
+
+                    Butter.setsplashcount(mContext, 0);
+
+                    Splash_Popup_Dissmiss(builder);
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+
+                    Splash_InterstialAd = null;
+
+                    Splash_Interstial_Setup111(builder, mContext);
+
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Splash_Interstial_Setup111(final Dialog builder, final Context mContext) {
+
+        Log.e("Splsh Inter 111", "Splsh Inter 111");
+
+        if (Exit_Menu_Decided == 100) {
+
+            Splash_Popup_Dissmiss(builder);
+            return;
+        }
+
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            Splash_InterstialAd = new InterstitialAd(mContext);
+            Splash_InterstialAd.setAdUnitId(Interstial);
+
+            Splash_InterstialAd.loadAd(adRequest);
+
+            Splash_InterstialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+
+                    Splash_InterstialAd.show();
+
+                    Butter.setsplashcount(mContext, 0);
+
+                    Splash_Popup_Dissmiss(builder);
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+
+                    Splash_InterstialAd = null;
+
+                    Splash_Interstial_Setup1111(builder, mContext);
+
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Splash_Interstial_Setup1111(final Dialog builder, final Context mContext) {
+
+        Log.e("Splsh Inter 1111", "Splsh Inter 1111");
+
+        if (Exit_Menu_Decided == 100) {
+
+            Splash_Popup_Dissmiss(builder);
+            return;
+        }
+
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            Splash_InterstialAd = new InterstitialAd(mContext);
+            Splash_InterstialAd.setAdUnitId(Interstial);
+
+            Splash_InterstialAd.loadAd(adRequest);
+
+            Splash_InterstialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+
+                    Splash_InterstialAd.show();
+
+                    Butter.setsplashcount(mContext, 0);
+
+                    Splash_Popup_Dissmiss(builder);
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+
+                    Splash_InterstialAd = null;
+
+                    Splash_Interstial_Setup11111(builder, mContext);
+
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Splash_Interstial_Setup11111(final Dialog builder, final Context mContext) {
+
+        Log.e("Splsh Inter 11111", "Splsh Inter 11111");
 
         if (Exit_Menu_Decided == 100) {
 
@@ -1989,6 +3910,66 @@ public class Pizza {
 
     public void Splash_Interstial_Setup2(final Dialog builder, final Context mContext) {
 
+        Log.e("Splsh Inter 2", "Splsh Inter 2");
+
+
+        if (Butter.getII2(mContext) == 0) {
+
+            Interstial = Butter.getI22(mContext);
+
+            Butter.setII2(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI222(mContext);
+
+            Butter.setII2(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            Splash_InterstialAd = new InterstitialAd(mContext);
+            Splash_InterstialAd.setAdUnitId(Interstial);
+
+            Splash_InterstialAd.loadAd(adRequest);
+
+            Splash_InterstialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+
+                    Splash_InterstialAd.show();
+
+                    Butter.setsplashcount(mContext, 0);
+
+                    Splash_Popup_Dissmiss(builder);
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+
+                    Splash_InterstialAd = null;
+
+                    Splash_Interstial_Setup22(builder, mContext);
+
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Splash_Interstial_Setup22(final Dialog builder, final Context mContext) {
+
+        Log.e("Splsh Inter 22", "Splsh Inter 22");
+
 
         if (Butter.getII2(mContext) == 0) {
 
@@ -2044,6 +4025,8 @@ public class Pizza {
     }
 
     public void Splash_Interstial_Setup3(final Dialog builder, final Context mContext) {
+
+        Log.e("Splsh Inter 3", "Splsh Inter 3");
 
 
         if (Butter.getII3(mContext) == 0) {
@@ -2150,25 +4133,26 @@ public class Pizza {
 
                     @Override
                     public void onInterstitialClicked(TappxInterstitial arg0) {
-                        // TODO Auto-generated method stub
+
 
                     }
 
                     @Override
                     public void onInterstitialDismissed(TappxInterstitial arg0) {
-                        // TODO Auto-generated method stub
+
 
                     }
 
                     @Override
                     public void onInterstitialShown(TappxInterstitial arg0) {
-                        // TODO Auto-generated method stub
+
 
                     }
 
                 });
 
     }
+
 
     public void Banner(final RelativeLayout Ad_Layout, final int Banner_Type) {
 
@@ -2187,7 +4171,16 @@ public class Pizza {
                     if (Server_Yes_No == 1 || Server_Yes_No == 0) {
 
 
-                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                        if ((Butter.getSetup(Contextt)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
 
                             Banner_Auto_Setup(Ad_Layout, Banner_Type);
 
@@ -2234,7 +4227,16 @@ public class Pizza {
                             return;
                         }
 
-                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                        if ((Butter.getSetup(Contextt)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
 
                             Banner_Auto_Setup_Main_Linear(Ad_Layout, Banner_Type);
 
@@ -2331,7 +4333,7 @@ public class Pizza {
 
                         @Override
                         public void onAdLoaded() {
-                            // TODO Auto-generated method stub
+
 
                             Ad_Layout.setVisibility(View.VISIBLE);
                             Butter.setsplashcount(Contextt, 0);
@@ -2342,7 +4344,7 @@ public class Pizza {
 
                         @Override
                         public void onAdFailedToLoad(int errorCode) {
-                            // TODO Auto-generated method stub
+
                             super.onAdFailedToLoad(errorCode);
 
                             mAdView.destroy();
@@ -2502,7 +4504,7 @@ public class Pizza {
 
                         @Override
                         public void onAdLoaded() {
-                            // TODO Auto-generated method stub
+
 
                             Ad_Layout.setVisibility(View.VISIBLE);
                             Butter.setsplashcount(Contextt, 0);
@@ -2513,7 +4515,7 @@ public class Pizza {
 
                         @Override
                         public void onAdFailedToLoad(int errorCode) {
-                            // TODO Auto-generated method stub
+
                             super.onAdFailedToLoad(errorCode);
 
                             mAdView.destroy();
@@ -2701,7 +4703,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
 
                 Ad_Layout.setVisibility(View.VISIBLE);
 
@@ -2711,7 +4713,358 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
+                super.onAdFailedToLoad(errorCode);
+
+                mAdView_Setup.destroy();
+
+                if ((Butter.getSetup(Contextt)).equals("1")) {
+                    Banner_Auto_Setup22(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("2")) {
+                    Banner_Auto_Setup11111(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("3")) {
+                    Banner_Auto_Setup1111(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("4")) {
+                    Banner_Auto_Setup111(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("5")) {
+                    Banner_Auto_Setup11(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("6")) {
+                    Banner_Auto_Setup2(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("7")) {
+                    Banner_Auto_Setup11111(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("8")) {
+                    Banner_Auto_Setup1111(Ad_Layout, Banner_Type);
+                }
+
+            }
+        });
+    }
+
+    public void Banner_Auto_Setup11(final RelativeLayout Ad_Layout, final int Banner_Type) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        AdSize Banner_Type_Size = null;
+
+        if (Banner_Type == 1) {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        } else if (Banner_Type == 2) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 3) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 4) {
+
+            Banner_Type_Size = AdSize.MEDIUM_RECTANGLE;
+
+        } else {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        }
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        AdView mAdView_Setup = new AdView(Contextt);
+        mAdView_Setup.setAdSize(Banner_Type_Size);
+        mAdView_Setup.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        mAdView_Setup.loadAd(adore);
+        Ad_Layout.addView(mAdView_Setup);
+
+        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
+                .getLayoutParams();
+        relativeParams.setMargins(0, 10, 0, 0);
+        Ad_Layout.setLayoutParams(relativeParams);
+
+        mAdView_Setup.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+
+                Ad_Layout.setVisibility(View.VISIBLE);
+
+                super.onAdLoaded();
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                mAdView_Setup.destroy();
+
+                Banner_Auto_Setup111(Ad_Layout, Banner_Type);
+
+            }
+        });
+    }
+
+    public void Banner_Auto_Setup111(final RelativeLayout Ad_Layout, final int Banner_Type) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        AdSize Banner_Type_Size = null;
+
+        if (Banner_Type == 1) {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        } else if (Banner_Type == 2) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 3) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 4) {
+
+            Banner_Type_Size = AdSize.MEDIUM_RECTANGLE;
+
+        } else {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        }
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        AdView mAdView_Setup = new AdView(Contextt);
+        mAdView_Setup.setAdSize(Banner_Type_Size);
+        mAdView_Setup.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        mAdView_Setup.loadAd(adore);
+        Ad_Layout.addView(mAdView_Setup);
+
+        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
+                .getLayoutParams();
+        relativeParams.setMargins(0, 10, 0, 0);
+        Ad_Layout.setLayoutParams(relativeParams);
+
+        mAdView_Setup.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+
+                Ad_Layout.setVisibility(View.VISIBLE);
+
+                super.onAdLoaded();
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                mAdView_Setup.destroy();
+
+                Banner_Auto_Setup1111(Ad_Layout, Banner_Type);
+
+            }
+        });
+    }
+
+    public void Banner_Auto_Setup1111(final RelativeLayout Ad_Layout, final int Banner_Type) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        AdSize Banner_Type_Size = null;
+
+        if (Banner_Type == 1) {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        } else if (Banner_Type == 2) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 3) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 4) {
+
+            Banner_Type_Size = AdSize.MEDIUM_RECTANGLE;
+
+        } else {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        }
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        AdView mAdView_Setup = new AdView(Contextt);
+        mAdView_Setup.setAdSize(Banner_Type_Size);
+        mAdView_Setup.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        mAdView_Setup.loadAd(adore);
+        Ad_Layout.addView(mAdView_Setup);
+
+        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
+                .getLayoutParams();
+        relativeParams.setMargins(0, 10, 0, 0);
+        Ad_Layout.setLayoutParams(relativeParams);
+
+        mAdView_Setup.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+
+                Ad_Layout.setVisibility(View.VISIBLE);
+
+                super.onAdLoaded();
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                mAdView_Setup.destroy();
+
+                Banner_Auto_Setup11111(Ad_Layout, Banner_Type);
+
+            }
+        });
+    }
+
+    public void Banner_Auto_Setup11111(final RelativeLayout Ad_Layout, final int Banner_Type) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        AdSize Banner_Type_Size = null;
+
+        if (Banner_Type == 1) {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        } else if (Banner_Type == 2) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 3) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 4) {
+
+            Banner_Type_Size = AdSize.MEDIUM_RECTANGLE;
+
+        } else {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        }
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        AdView mAdView_Setup = new AdView(Contextt);
+        mAdView_Setup.setAdSize(Banner_Type_Size);
+        mAdView_Setup.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        mAdView_Setup.loadAd(adore);
+        Ad_Layout.addView(mAdView_Setup);
+
+        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
+                .getLayoutParams();
+        relativeParams.setMargins(0, 10, 0, 0);
+        Ad_Layout.setLayoutParams(relativeParams);
+
+        mAdView_Setup.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+
+                Ad_Layout.setVisibility(View.VISIBLE);
+
+                super.onAdLoaded();
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
                 super.onAdFailedToLoad(errorCode);
 
                 mAdView_Setup.destroy();
@@ -2783,7 +5136,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
 
                 Ad_Layout.setVisibility(View.VISIBLE);
 
@@ -2793,7 +5146,89 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
+                super.onAdFailedToLoad(errorCode);
+
+                mAdView_Setup.destroy();
+
+                Banner_Auto_Setup22(Ad_Layout, Banner_Type);
+
+            }
+        });
+    }
+
+    public void Banner_Auto_Setup22(final RelativeLayout Ad_Layout, final int Banner_Type) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        AdSize Banner_Type_Size = null;
+
+        if (Banner_Type == 1) {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        } else if (Banner_Type == 2) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 3) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 4) {
+
+            Banner_Type_Size = AdSize.MEDIUM_RECTANGLE;
+
+        } else {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        }
+
+        if (Butter.getBB2(Contextt) == 0) {
+
+            Banner = Butter.getB22(Contextt);
+
+            Butter.setBB2(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB222(Contextt);
+
+            Butter.setBB2(Contextt, 0);
+
+        }
+
+        AdView mAdView_Setup = new AdView(Contextt);
+        mAdView_Setup.setAdSize(Banner_Type_Size);
+        mAdView_Setup.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        mAdView_Setup.loadAd(adore);
+        Ad_Layout.addView(mAdView_Setup);
+
+        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
+                .getLayoutParams();
+        relativeParams.setMargins(0, 10, 0, 0);
+        Ad_Layout.setLayoutParams(relativeParams);
+
+        mAdView_Setup.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+
+                Ad_Layout.setVisibility(View.VISIBLE);
+
+                super.onAdLoaded();
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
                 super.onAdFailedToLoad(errorCode);
 
                 mAdView_Setup.destroy();
@@ -2865,7 +5300,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
 
                 Ad_Layout.setVisibility(View.VISIBLE);
 
@@ -2876,7 +5311,7 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
                 super.onAdFailedToLoad(errorCode);
 
                 mAdView_Setup.destroy();
@@ -3052,7 +5487,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
 
                 Ad_Layout.setVisibility(View.VISIBLE);
 
@@ -3062,7 +5497,358 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
+                super.onAdFailedToLoad(errorCode);
+
+                mAdView_Setup.destroy();
+
+                if ((Butter.getSetup(Contextt)).equals("1")) {
+                    Banner_Auto_Setup_Linear22(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("2")) {
+                    Banner_Auto_Setup_Linear11111(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("3")) {
+                    Banner_Auto_Setup_Linear1111(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("4")) {
+                    Banner_Auto_Setup_Linear111(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("5")) {
+                    Banner_Auto_Setup_Linear11(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("6")) {
+                    Banner_Auto_Setup_Linear2(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("7")) {
+                    Banner_Auto_Setup_Linear11111(Ad_Layout, Banner_Type);
+                }
+                if ((Butter.getSetup(Contextt)).equals("8")) {
+                    Banner_Auto_Setup_Linear1111(Ad_Layout, Banner_Type);
+                }
+
+            }
+        });
+    }
+
+    public void Banner_Auto_Setup_Linear11(final RelativeLayout Ad_Layout, final int Banner_Type) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        AdSize Banner_Type_Size = null;
+
+        if (Banner_Type == 1) {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        } else if (Banner_Type == 2) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 3) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 4) {
+
+            Banner_Type_Size = AdSize.MEDIUM_RECTANGLE;
+
+        } else {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        }
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        AdView mAdView_Setup = new AdView(Contextt);
+        mAdView_Setup.setAdSize(Banner_Type_Size);
+        mAdView_Setup.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        mAdView_Setup.loadAd(adore);
+        Ad_Layout.addView(mAdView_Setup);
+
+        LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) Ad_Layout
+                .getLayoutParams();
+        relativeParams.setMargins(0, 10, 0, 0);
+        Ad_Layout.setLayoutParams(relativeParams);
+
+        mAdView_Setup.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+
+                Ad_Layout.setVisibility(View.VISIBLE);
+
+                super.onAdLoaded();
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                mAdView_Setup.destroy();
+
+                Banner_Auto_Setup_Linear111(Ad_Layout, Banner_Type);
+
+            }
+        });
+    }
+
+    public void Banner_Auto_Setup_Linear111(final RelativeLayout Ad_Layout, final int Banner_Type) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        AdSize Banner_Type_Size = null;
+
+        if (Banner_Type == 1) {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        } else if (Banner_Type == 2) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 3) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 4) {
+
+            Banner_Type_Size = AdSize.MEDIUM_RECTANGLE;
+
+        } else {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        }
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        AdView mAdView_Setup = new AdView(Contextt);
+        mAdView_Setup.setAdSize(Banner_Type_Size);
+        mAdView_Setup.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        mAdView_Setup.loadAd(adore);
+        Ad_Layout.addView(mAdView_Setup);
+
+        LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) Ad_Layout
+                .getLayoutParams();
+        relativeParams.setMargins(0, 10, 0, 0);
+        Ad_Layout.setLayoutParams(relativeParams);
+
+        mAdView_Setup.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+
+                Ad_Layout.setVisibility(View.VISIBLE);
+
+                super.onAdLoaded();
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                mAdView_Setup.destroy();
+
+                Banner_Auto_Setup_Linear1111(Ad_Layout, Banner_Type);
+
+            }
+        });
+    }
+
+    public void Banner_Auto_Setup_Linear1111(final RelativeLayout Ad_Layout, final int Banner_Type) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        AdSize Banner_Type_Size = null;
+
+        if (Banner_Type == 1) {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        } else if (Banner_Type == 2) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 3) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 4) {
+
+            Banner_Type_Size = AdSize.MEDIUM_RECTANGLE;
+
+        } else {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        }
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        AdView mAdView_Setup = new AdView(Contextt);
+        mAdView_Setup.setAdSize(Banner_Type_Size);
+        mAdView_Setup.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        mAdView_Setup.loadAd(adore);
+        Ad_Layout.addView(mAdView_Setup);
+
+        LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) Ad_Layout
+                .getLayoutParams();
+        relativeParams.setMargins(0, 10, 0, 0);
+        Ad_Layout.setLayoutParams(relativeParams);
+
+        mAdView_Setup.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+
+                Ad_Layout.setVisibility(View.VISIBLE);
+
+                super.onAdLoaded();
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
+                super.onAdFailedToLoad(errorCode);
+
+                mAdView_Setup.destroy();
+
+                Banner_Auto_Setup_Linear11111(Ad_Layout, Banner_Type);
+
+            }
+        });
+    }
+
+    public void Banner_Auto_Setup_Linear11111(final RelativeLayout Ad_Layout, final int Banner_Type) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        AdSize Banner_Type_Size = null;
+
+        if (Banner_Type == 1) {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        } else if (Banner_Type == 2) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 3) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 4) {
+
+            Banner_Type_Size = AdSize.MEDIUM_RECTANGLE;
+
+        } else {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        }
+
+        if (Butter.getBB1(Contextt) == 0) {
+
+            Banner = Butter.getB11(Contextt);
+
+            Butter.setBB1(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB111(Contextt);
+
+            Butter.setBB1(Contextt, 0);
+
+        }
+
+        AdView mAdView_Setup = new AdView(Contextt);
+        mAdView_Setup.setAdSize(Banner_Type_Size);
+        mAdView_Setup.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        mAdView_Setup.loadAd(adore);
+        Ad_Layout.addView(mAdView_Setup);
+
+        LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) Ad_Layout
+                .getLayoutParams();
+        relativeParams.setMargins(0, 10, 0, 0);
+        Ad_Layout.setLayoutParams(relativeParams);
+
+        mAdView_Setup.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+
+                Ad_Layout.setVisibility(View.VISIBLE);
+
+                super.onAdLoaded();
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
                 super.onAdFailedToLoad(errorCode);
 
                 mAdView_Setup.destroy();
@@ -3134,7 +5920,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
 
                 Ad_Layout.setVisibility(View.VISIBLE);
 
@@ -3144,7 +5930,89 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
+                super.onAdFailedToLoad(errorCode);
+
+                mAdView_Setup.destroy();
+
+                Banner_Auto_Setup_Linear22(Ad_Layout, Banner_Type);
+
+            }
+        });
+    }
+
+    public void Banner_Auto_Setup_Linear22(final RelativeLayout Ad_Layout, final int Banner_Type) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        AdSize Banner_Type_Size = null;
+
+        if (Banner_Type == 1) {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        } else if (Banner_Type == 2) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 3) {
+
+            Banner_Type_Size = AdSize.LARGE_BANNER;
+
+        } else if (Banner_Type == 4) {
+
+            Banner_Type_Size = AdSize.MEDIUM_RECTANGLE;
+
+        } else {
+
+            Banner_Type_Size = AdSize.BANNER;
+
+        }
+
+        if (Butter.getBB2(Contextt) == 0) {
+
+            Banner = Butter.getB22(Contextt);
+
+            Butter.setBB2(Contextt, 1);
+
+        } else {
+
+            Banner = Butter.getB222(Contextt);
+
+            Butter.setBB2(Contextt, 0);
+
+        }
+
+        AdView mAdView_Setup = new AdView(Contextt);
+        mAdView_Setup.setAdSize(Banner_Type_Size);
+        mAdView_Setup.setAdUnitId(Banner);
+        AdRequest adore = new AdRequest.Builder().build();
+        mAdView_Setup.loadAd(adore);
+        Ad_Layout.addView(mAdView_Setup);
+
+        LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) Ad_Layout
+                .getLayoutParams();
+        relativeParams.setMargins(0, 10, 0, 0);
+        Ad_Layout.setLayoutParams(relativeParams);
+
+        mAdView_Setup.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+
+
+                Ad_Layout.setVisibility(View.VISIBLE);
+
+                super.onAdLoaded();
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+
                 super.onAdFailedToLoad(errorCode);
 
                 mAdView_Setup.destroy();
@@ -3216,7 +6084,7 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
 
                 Ad_Layout.setVisibility(View.VISIBLE);
 
@@ -3227,7 +6095,7 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
                 super.onAdFailedToLoad(errorCode);
 
                 mAdView_Setup.destroy();
@@ -3345,7 +6213,7 @@ public class Pizza {
     }
 
     private void Load_Splash_Goog(final Context mContext, int splash_Screen_Time) {
-        // TODO Auto-generated method stub
+
 
         if (Exit_Menu_Decided == 100) {
 
@@ -3409,7 +6277,7 @@ public class Pizza {
 
     public void Interstial(final Context mContext,
                            final int How_Much_Time_After_Interstial_Milisecond) {
-        // TODO Auto-generated method stub
+
 
         if (Exit_Menu_Decided == 100) {
 
@@ -3436,7 +6304,16 @@ public class Pizza {
 
     public void Interstial(final Context mContext) {
 
-        if ((Butter.getSetup(mContext)).equals("1")) {
+        if ((Butter.getSetup(mContext)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
 
             Interstial_When_Load_Setup1(mContext);
 
@@ -3559,6 +6436,265 @@ public class Pizza {
                 public void onAdFailedToLoad(int errorCode) {
                     super.onAdFailedToLoad(errorCode);
 
+                    if ((Butter.getSetup(Contextt)).equals("1")) {
+                        Interstial_When_Load_Setup22(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("2")) {
+                        Interstial_When_Load_Setup11111(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("3")) {
+                        Interstial_When_Load_Setup1111(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("4")) {
+                        Interstial_When_Load_Setup111(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("5")) {
+                        Interstial_When_Load_Setup11(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("6")) {
+                        Interstial_When_Load_Setup2(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("7")) {
+                        Interstial_When_Load_Setup11111(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("8")) {
+                        Interstial_When_Load_Setup1111(mContext);
+                    }
+
+                    super.onAdFailedToLoad(errorCode);
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Interstial_When_Load_Setup11(final Context mContext) {
+
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstialAd = new InterstitialAd(mContext);
+            InterstialAd.setAdUnitId(Interstial);
+
+            InterstialAd.loadAd(adRequest);
+
+            InterstialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    InterstialAd.show();
+                    Butter.setsplashcount(mContext, 0);
+                    Ad_ProgressDialog.dismiss();
+
+                    super.onAdLoaded();
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+
+                    Interstial_When_Load_Setup111(mContext);
+
+                    super.onAdFailedToLoad(errorCode);
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Interstial_When_Load_Setup111(final Context mContext) {
+
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstialAd = new InterstitialAd(mContext);
+            InterstialAd.setAdUnitId(Interstial);
+
+            InterstialAd.loadAd(adRequest);
+
+            InterstialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    InterstialAd.show();
+                    Butter.setsplashcount(mContext, 0);
+                    Ad_ProgressDialog.dismiss();
+
+                    super.onAdLoaded();
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+
+                    Interstial_When_Load_Setup1111(mContext);
+
+                    super.onAdFailedToLoad(errorCode);
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Interstial_When_Load_Setup1111(final Context mContext) {
+
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstialAd = new InterstitialAd(mContext);
+            InterstialAd.setAdUnitId(Interstial);
+
+            InterstialAd.loadAd(adRequest);
+
+            InterstialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    InterstialAd.show();
+                    Butter.setsplashcount(mContext, 0);
+                    Ad_ProgressDialog.dismiss();
+
+                    super.onAdLoaded();
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+
+                    Interstial_When_Load_Setup11111(mContext);
+
+                    super.onAdFailedToLoad(errorCode);
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Interstial_When_Load_Setup11111(final Context mContext) {
+
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstialAd = new InterstitialAd(mContext);
+            InterstialAd.setAdUnitId(Interstial);
+
+            InterstialAd.loadAd(adRequest);
+
+            InterstialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    InterstialAd.show();
+                    Butter.setsplashcount(mContext, 0);
+                    Ad_ProgressDialog.dismiss();
+
+                    super.onAdLoaded();
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+
                     Interstial_When_Load_Setup2(mContext);
 
                     super.onAdFailedToLoad(errorCode);
@@ -3573,6 +6709,61 @@ public class Pizza {
     }
 
     public void Interstial_When_Load_Setup2(final Context mContext) {
+
+
+        if (Butter.getII2(mContext) == 0) {
+
+            Interstial = Butter.getI22(mContext);
+
+            Butter.setII2(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI222(mContext);
+
+            Butter.setII2(mContext, 0);
+
+        }
+
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstialAd = new InterstitialAd(mContext);
+            InterstialAd.setAdUnitId(Interstial);
+
+            InterstialAd.loadAd(adRequest);
+
+            InterstialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    InterstialAd.show();
+                    Butter.setsplashcount(mContext, 0);
+                    Ad_ProgressDialog.dismiss();
+
+                    super.onAdLoaded();
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+
+                    Interstial_When_Load_Setup22(mContext);
+
+                    super.onAdFailedToLoad(errorCode);
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Interstial_When_Load_Setup22(final Context mContext) {
 
 
         if (Butter.getII2(mContext) == 0) {
@@ -3689,6 +6880,7 @@ public class Pizza {
 
     }
 
+
     public void Pre_Interstial_Show(final Context mContext) {
 
         if (Exit_Menu_Decided == 100) {
@@ -3699,7 +6891,17 @@ public class Pizza {
 
         if ((Butter.getextra1(mContext)).equals("1")) {
 
-            if ((Butter.getSetup(mContext)).equals("1")) {
+
+            if ((Butter.getSetup(mContext)).equals("1") ||
+                    (Butter.getSetup(Contextt)).equals("2") ||
+                    (Butter.getSetup(Contextt)).equals("3") ||
+                    (Butter.getSetup(Contextt)).equals("4") ||
+                    (Butter.getSetup(Contextt)).equals("5") ||
+                    (Butter.getSetup(Contextt)).equals("6") ||
+                    (Butter.getSetup(Contextt)).equals("7") ||
+                    (Butter.getSetup(Contextt)).equals("8") ||
+                    (Butter.getSetup(Contextt)).equals("9") ||
+                    (Butter.getSetup(Contextt)).equals("10")) {
 
                 Show_Inter_Setup_Show(mContext);
 
@@ -3711,11 +6913,22 @@ public class Pizza {
 
         } else if ((Butter.getextra1(mContext)).equals("2")) {
 
+
             Pre_App_Open_Show((Activity) mContext);
 
         } else {
 
-            if ((Butter.getSetup(mContext)).equals("1")) {
+
+            if ((Butter.getSetup(mContext)).equals("1") ||
+                    (Butter.getSetup(Contextt)).equals("2") ||
+                    (Butter.getSetup(Contextt)).equals("3") ||
+                    (Butter.getSetup(Contextt)).equals("4") ||
+                    (Butter.getSetup(Contextt)).equals("5") ||
+                    (Butter.getSetup(Contextt)).equals("6") ||
+                    (Butter.getSetup(Contextt)).equals("7") ||
+                    (Butter.getSetup(Contextt)).equals("8") ||
+                    (Butter.getSetup(Contextt)).equals("9") ||
+                    (Butter.getSetup(Contextt)).equals("10")) {
 
                 Show_Inter_Setup_Show(mContext);
 
@@ -3740,8 +6953,17 @@ public class Pizza {
 
         if ((Butter.getextra1(mContext)).equals("1")) {
 
-            //Inter
-            if ((Butter.getSetup(mContext)).equals("1")) {
+
+            if ((Butter.getSetup(mContext)).equals("1") ||
+                    (Butter.getSetup(Contextt)).equals("2") ||
+                    (Butter.getSetup(Contextt)).equals("3") ||
+                    (Butter.getSetup(Contextt)).equals("4") ||
+                    (Butter.getSetup(Contextt)).equals("5") ||
+                    (Butter.getSetup(Contextt)).equals("6") ||
+                    (Butter.getSetup(Contextt)).equals("7") ||
+                    (Butter.getSetup(Contextt)).equals("8") ||
+                    (Butter.getSetup(Contextt)).equals("9") ||
+                    (Butter.getSetup(Contextt)).equals("10")) {
 
                 Show_Inter_Setup_Show_End(mContext);
 
@@ -3753,11 +6975,21 @@ public class Pizza {
 
         } else if ((Butter.getextra1(mContext)).equals("2")) {
 
+
             Pre_App_Open_Show((Activity) mContext);
 
         } else {
 
-            if ((Butter.getSetup(mContext)).equals("1")) {
+            if ((Butter.getSetup(mContext)).equals("1") ||
+                    (Butter.getSetup(Contextt)).equals("2") ||
+                    (Butter.getSetup(Contextt)).equals("3") ||
+                    (Butter.getSetup(Contextt)).equals("4") ||
+                    (Butter.getSetup(Contextt)).equals("5") ||
+                    (Butter.getSetup(Contextt)).equals("6") ||
+                    (Butter.getSetup(Contextt)).equals("7") ||
+                    (Butter.getSetup(Contextt)).equals("8") ||
+                    (Butter.getSetup(Contextt)).equals("9") ||
+                    (Butter.getSetup(Contextt)).equals("10")) {
 
                 Show_Inter_Setup_Show_End(mContext);
 
@@ -3784,6 +7016,7 @@ public class Pizza {
 
             Butter.setinter(mContext, 1);
 
+            Log.e("Normallllloaddd 1", "Normallllloaddd 1");
 
         } else {
 
@@ -3791,6 +7024,7 @@ public class Pizza {
 
             Butter.setinter(mContext, 0);
 
+            Log.e("Normallllloaddd 2", "Normallllloaddd 2");
 
         }
 
@@ -3809,6 +7043,7 @@ public class Pizza {
                     Inter_Failed = 0;
                     super.onAdLoaded();
 
+                    Log.e("Normallllloaddd", "Normallllloaddd");
 
                 }
 
@@ -3837,7 +7072,6 @@ public class Pizza {
                                         TappxInterstitial tappxInterstitial,
                                         TappxAdError tappxAdError) {
 
-                                    Inter_Failed = 50;
 
                                     if ((new Random().nextInt((2 - 1) + 1) + 1) == 1) {
                                         SO = SO_FULLPAGE;
@@ -3849,6 +7083,7 @@ public class Pizza {
                                         @Override
                                         public void onReceiveAd(Ad ad) {
 
+                                            Inter_Failed = 50;
 
                                         }
 
@@ -3864,21 +7099,21 @@ public class Pizza {
                                 @Override
                                 public void onInterstitialClicked(
                                         TappxInterstitial arg0) {
-                                    // TODO Auto-generated method stub
+
 
                                 }
 
                                 @Override
                                 public void onInterstitialDismissed(
                                         TappxInterstitial arg0) {
-                                    // TODO Auto-generated method stub
+
 
                                 }
 
                                 @Override
                                 public void onInterstitialShown(
                                         TappxInterstitial arg0) {
-                                    // TODO Auto-generated method stub
+
 
                                 }
 
@@ -3902,6 +7137,16 @@ public class Pizza {
 
         if (isNetworkConnected(Contextt) == true) {
 
+            if (Inter_Failed == 0) {
+
+                if (InterstialAd1 != null) {
+                    InterstialAd1.show();
+                    Butter.setsplashcount(mContext, 0);
+                    Log.e("Normallllloaddd Show", "Normallllloaddd Show");
+                }
+
+            }
+
             if (Inter_Failed == 1) {
 
                 if (tappxInterstitial_preload != null)
@@ -3909,15 +7154,6 @@ public class Pizza {
 
                 Butter.setsplashcount(mContext,
                         (Butter.getsplashcount(mContext) + 1));
-
-            }
-
-            if (Inter_Failed == 0) {
-
-                if (InterstialAd1 != null) {
-                    InterstialAd1.show();
-                    Butter.setsplashcount(mContext, 0);
-                }
 
             }
 
@@ -4003,19 +7239,20 @@ public class Pizza {
         try {
 
             AdRequest adRequest = new AdRequest.Builder().build();
-            InterstialAd_Setup3 = new InterstitialAd(mContext);
-            InterstialAd_Setup3.setAdUnitId("" + Interstial);
+            InterstialAd_Setup = new InterstitialAd(mContext);
+            InterstialAd_Setup.setAdUnitId("" + Interstial);
 
-            InterstialAd_Setup3.loadAd(adRequest);
+            InterstialAd_Setup.loadAd(adRequest);
 
-            InterstialAd_Setup3.setAdListener(new AdListener() {
+            InterstialAd_Setup.setAdListener(new AdListener() {
                 @Override
                 public void onAdLoaded() {
 
                     super.onAdLoaded();
 
-                    Inter_Setup = 3;
+                    Inter_Setup = 1;
 
+                    Log.e("Setup 1", "Setup 1");
 
                 }
 
@@ -4024,12 +7261,268 @@ public class Pizza {
 
                     super.onAdFailedToLoad(errorCode);
 
-                    InterstialAd_Setup3 = null;
+                    InterstialAd_Setup = null;
 
-                    Inter_Setup = 33;
+                    if ((Butter.getSetup(Contextt)).equals("1")) {
+                        Load_Inter_Setup22(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("2")) {
+                        Load_Inter_Setup11111(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("3")) {
+                        Load_Inter_Setup1111(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("4")) {
+                        Load_Inter_Setup111(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("5")) {
+                        Load_Inter_Setup11(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("6")) {
+                        Load_Inter_Setup2(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("7")) {
+                        Load_Inter_Setup11111(mContext);
+                    }
+                    if ((Butter.getSetup(Contextt)).equals("8")) {
+                        Load_Inter_Setup1111(mContext);
+                    }
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Load_Inter_Setup11(final Context mContext) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstialAd_Setup = new InterstitialAd(mContext);
+            InterstialAd_Setup.setAdUnitId("" + Interstial);
+
+            InterstialAd_Setup.loadAd(adRequest);
+
+            InterstialAd_Setup.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    super.onAdLoaded();
+
+                    Inter_Setup = 11;
+
+                    Log.e("Setup 1", "Setup 1");
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+
+                    super.onAdFailedToLoad(errorCode);
+
+                    InterstialAd_Setup = null;
+
+                    Load_Inter_Setup111(mContext);
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Load_Inter_Setup111(final Context mContext) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstialAd_Setup = new InterstitialAd(mContext);
+            InterstialAd_Setup.setAdUnitId("" + Interstial);
+
+            InterstialAd_Setup.loadAd(adRequest);
+
+            InterstialAd_Setup.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    super.onAdLoaded();
+
+                    Inter_Setup = 111;
+
+                    Log.e("Setup 1", "Setup 1");
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+
+                    super.onAdFailedToLoad(errorCode);
+
+                    InterstialAd_Setup = null;
+
+                    Load_Inter_Setup1111(mContext);
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Load_Inter_Setup1111(final Context mContext) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstialAd_Setup = new InterstitialAd(mContext);
+            InterstialAd_Setup.setAdUnitId("" + Interstial);
+
+            InterstialAd_Setup.loadAd(adRequest);
+
+            InterstialAd_Setup.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    super.onAdLoaded();
+
+                    Inter_Setup = 1111;
+
+                    Log.e("Setup 1", "Setup 1");
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+
+                    super.onAdFailedToLoad(errorCode);
+
+                    InterstialAd_Setup = null;
+
+                    Load_Inter_Setup11111(mContext);
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Load_Inter_Setup11111(final Context mContext) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getII1(mContext) == 0) {
+
+            Interstial = Butter.getI11(mContext);
+
+            Butter.setII1(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI111(mContext);
+
+            Butter.setII1(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstialAd_Setup = new InterstitialAd(mContext);
+            InterstialAd_Setup.setAdUnitId("" + Interstial);
+
+            InterstialAd_Setup.loadAd(adRequest);
+
+            InterstialAd_Setup.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    super.onAdLoaded();
+
+                    Inter_Setup = 11111;
+
+                    Log.e("Setup 1", "Setup 1");
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+
+                    super.onAdFailedToLoad(errorCode);
+
+                    InterstialAd_Setup = null;
 
                     Load_Inter_Setup2(mContext);
-
 
                 }
 
@@ -4064,12 +7557,12 @@ public class Pizza {
         try {
 
             AdRequest adRequest = new AdRequest.Builder().build();
-            InterstialAd_Setup2 = new InterstitialAd(mContext);
-            InterstialAd_Setup2.setAdUnitId("" + Interstial);
+            InterstialAd_Setup = new InterstitialAd(mContext);
+            InterstialAd_Setup.setAdUnitId("" + Interstial);
 
-            InterstialAd_Setup2.loadAd(adRequest);
+            InterstialAd_Setup.loadAd(adRequest);
 
-            InterstialAd_Setup2.setAdListener(new AdListener() {
+            InterstialAd_Setup.setAdListener(new AdListener() {
                 @Override
                 public void onAdLoaded() {
 
@@ -4077,6 +7570,7 @@ public class Pizza {
 
                     Inter_Setup = 2;
 
+                    Log.e("Setup 2", "Setup 2");
 
                 }
 
@@ -4085,9 +7579,67 @@ public class Pizza {
 
                     super.onAdFailedToLoad(errorCode);
 
-                    InterstialAd_Setup2 = null;
+                    InterstialAd_Setup = null;
+
+                    Load_Inter_Setup22(mContext);
+
+
+                }
+
+            });
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void Load_Inter_Setup22(final Context mContext) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getII2(mContext) == 0) {
+
+            Interstial = Butter.getI22(mContext);
+
+            Butter.setII2(mContext, 1);
+
+        } else {
+
+            Interstial = Butter.getI222(mContext);
+
+            Butter.setII2(mContext, 0);
+
+        }
+
+        try {
+
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstialAd_Setup = new InterstitialAd(mContext);
+            InterstialAd_Setup.setAdUnitId("" + Interstial);
+
+            InterstialAd_Setup.loadAd(adRequest);
+
+            InterstialAd_Setup.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+
+                    super.onAdLoaded();
 
                     Inter_Setup = 22;
+
+                    Log.e("Setup 2", "Setup 2");
+
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+
+                    super.onAdFailedToLoad(errorCode);
+
+                    InterstialAd_Setup = null;
 
                     Load_Inter_Setup3(mContext);
 
@@ -4125,19 +7677,20 @@ public class Pizza {
         try {
 
             AdRequest adRequest = new AdRequest.Builder().build();
-            InterstialAd_Setup1 = new InterstitialAd(mContext);
-            InterstialAd_Setup1.setAdUnitId("" + Interstial);
+            InterstialAd_Setup = new InterstitialAd(mContext);
+            InterstialAd_Setup.setAdUnitId("" + Interstial);
 
-            InterstialAd_Setup1.loadAd(adRequest);
+            InterstialAd_Setup.loadAd(adRequest);
 
-            InterstialAd_Setup1.setAdListener(new AdListener() {
+            InterstialAd_Setup.setAdListener(new AdListener() {
                 @Override
                 public void onAdLoaded() {
 
                     super.onAdLoaded();
 
-                    Inter_Setup = 1;
+                    Inter_Setup = 3;
 
+                    Log.e("Setup 3", "Setup 3");
 
                 }
 
@@ -4146,10 +7699,7 @@ public class Pizza {
 
                     super.onAdFailedToLoad(errorCode);
 
-
-                    Inter_Setup = 11;
-
-                    InterstialAd_Setup1 = null;
+                    InterstialAd_Setup = null;
 
                     tappxInterstitial_preload = new TappxInterstitial(mContext,
                             Butter.gettx(Contextt));
@@ -4160,8 +7710,9 @@ public class Pizza {
                                 public void onInterstitialLoaded(
                                         TappxInterstitial tappxInterstitial) {
 
-                                    Inter_Failed = 1;
+                                    Inter_Setup = 0;
 
+                                    Log.e("Setup TX", "Setup TX");
 
                                 }
 
@@ -4170,7 +7721,7 @@ public class Pizza {
                                         TappxInterstitial tappxInterstitial,
                                         TappxAdError tappxAdError) {
 
-                                    Inter_Failed = 50;
+                                    Inter_Setup = 50;
 
                                     if ((new Random().nextInt((2 - 1) + 1) + 1) == 1) {
                                         SO = SO_FULLPAGE;
@@ -4182,6 +7733,8 @@ public class Pizza {
                                         @Override
                                         public void onReceiveAd(Ad ad) {
 
+                                            Log.e("SO", "SO");
+                                            Inter_Setup = 50;
 
                                         }
 
@@ -4196,21 +7749,21 @@ public class Pizza {
                                 @Override
                                 public void onInterstitialClicked(
                                         TappxInterstitial arg0) {
-                                    // TODO Auto-generated method stub
+
 
                                 }
 
                                 @Override
                                 public void onInterstitialDismissed(
                                         TappxInterstitial arg0) {
-                                    // TODO Auto-generated method stub
+
 
                                 }
 
                                 @Override
                                 public void onInterstitialShown(
                                         TappxInterstitial arg0) {
-                                    // TODO Auto-generated method stub
+
 
                                 }
 
@@ -4232,62 +7785,39 @@ public class Pizza {
         if (isNetworkConnected(context) == true) {
 
 
-            if (Inter_Setup == 33) {
+            if (Inter_Setup == 1
+                    || Inter_Setup == 11
+                    || Inter_Setup == 111
+                    || Inter_Setup == 1111
+                    || Inter_Setup == 11111
+                    || Inter_Setup == 2
+                    || Inter_Setup == 22
+                    || Inter_Setup == 3) {
 
-
-            }
-
-
-            if (Inter_Setup == 3) {
-
-                if (InterstialAd_Setup3 != null) {
-                    InterstialAd_Setup3.show();
+                if (InterstialAd_Setup != null) {
+                    InterstialAd_Setup.show();
+                    Load_Inter_Setup1(context);
                 }
 
             }
 
 
-            if (Inter_Setup == 22) {
-
-
-            }
-
-
-            if (Inter_Setup == 2) {
-
-                if (InterstialAd_Setup2 != null) {
-                    InterstialAd_Setup2.show();
-                }
-
-            }
-
-
-            if (Inter_Setup == 1) {
-
-                if (InterstialAd_Setup1 != null) {
-                    InterstialAd_Setup1.show();
-                }
-
-            }
-
-            if (Inter_Setup == 11) {
-
+            if (Inter_Setup == 0) {
                 if (tappxInterstitial_preload != null)
                     tappxInterstitial_preload.show();
-
+                Load_Inter_Setup1(context);
             }
 
             if (Inter_Setup == 50) {
-
                 if (startAppAd.isReady()) {
                     startAppAd.showAd();
                     Butter.setsplashcount(context,
                             (Butter.getsplashcount(context) + 1));
+                    Load_Inter_Setup1(context);
                 }
 
             }
 
-            Load_Inter_Setup1(context);
 
         }
 
@@ -4300,53 +7830,28 @@ public class Pizza {
         if (isNetworkConnected(context) == true) {
 
 
-            if (Inter_Setup == 33) {
+            if (Inter_Setup == 1
+                    || Inter_Setup == 11
+                    || Inter_Setup == 111
+                    || Inter_Setup == 1111
+                    || Inter_Setup == 11111
+                    || Inter_Setup == 2
+                    || Inter_Setup == 22
+                    || Inter_Setup == 3) {
 
-
-            }
-
-
-            if (Inter_Setup == 3) {
-
-                if (InterstialAd_Setup3 != null) {
-                    InterstialAd_Setup3.show();
+                if (InterstialAd_Setup != null) {
+                    InterstialAd_Setup.show();
                 }
 
             }
 
 
-            if (Inter_Setup == 22) {
-
-
-            }
-
-
-            if (Inter_Setup == 2) {
-
-                if (InterstialAd_Setup2 != null) {
-                    InterstialAd_Setup2.show();
-                }
-
-            }
-
-
-            if (Inter_Setup == 1) {
-
-                if (InterstialAd_Setup1 != null) {
-                    InterstialAd_Setup1.show();
-                }
-
-            }
-
-            if (Inter_Setup == 11) {
-
+            if (Inter_Setup == 0) {
                 if (tappxInterstitial_preload != null)
                     tappxInterstitial_preload.show();
-
             }
 
             if (Inter_Setup == 50) {
-
                 if (startAppAd.isReady()) {
                     startAppAd.showAd();
                     Butter.setsplashcount(context,
@@ -4387,6 +7892,7 @@ public class Pizza {
 
     }
 
+
     public void Native(Context nContext, final RelativeLayout Ad_Layout,
                        int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
 
@@ -4404,7 +7910,16 @@ public class Pizza {
 
                     if (Server_Yes_No == 1 || Server_Yes_No == 0) {
 
-                        if ((Butter.getSetup(nContext)).equals("1")) {
+                        if ((Butter.getSetup(nContext)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
 
                             Native_Auto_Setup(nContext, Ad_Layout,
                                     Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
@@ -4452,7 +7967,16 @@ public class Pizza {
 
                     if (Server_Yes_No == 1 || Server_Yes_No == 0) {
 
-                        if ((Butter.getSetup(nContext)).equals("1")) {
+                        if ((Butter.getSetup(nContext)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
 
                             Native_Auto_Setup_Main_Linear(nContext, Ad_Layout,
                                     Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
@@ -4535,7 +8059,7 @@ public class Pizza {
                                         Ad_Layout.addView(templateView);
                                         RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
                                                 .getLayoutParams();
-                                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin); // left, top, right,
+                                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
 
                                         Ad_Layout.setLayoutParams(relativeParams);
 
@@ -4737,6 +8261,7 @@ public class Pizza {
     public void Native_Auto_Setup1(Context nContext, final RelativeLayout Ad_Layout,
                                    int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
 
+        Log.e("Native 1", "Native 1");
 
         if (Exit_Menu_Decided == 100) {
 
@@ -4778,7 +8303,327 @@ public class Pizza {
                         Ad_Layout.addView(templateView);
                         RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
                                 .getLayoutParams();
-                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin); // left, top, right,
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
+
+                        Ad_Layout.setLayoutParams(relativeParams);
+
+                        templateView.setVisibility(View.VISIBLE);
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Ad_Layout.removeAllViews();
+
+                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                            Native_Auto_Setup22(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("2")) {
+                            Native_Auto_Setup11111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("3")) {
+                            Native_Auto_Setup1111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("4")) {
+                            Native_Auto_Setup111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("5")) {
+                            Native_Auto_Setup11(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("6")) {
+                            Native_Auto_Setup2(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("7")) {
+                            Native_Auto_Setup11111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("8")) {
+                            Native_Auto_Setup1111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+
+    }
+
+    public void Native_Auto_Setup11(Context nContext, final RelativeLayout Ad_Layout,
+                                    int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
+
+        Log.e("Native 11", "Native 11");
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getNN1(nContext) == 0) {
+
+            Native_ID = Butter.getN11(nContext);
+
+            Butter.setNN1(nContext, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(nContext);
+
+            Butter.setNN1(nContext, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(nContext, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        TemplateView templateView = new TemplateView(nContext, Native_Type);
+
+                        templateView.setStyles(styles);
+                        templateView.setNativeAd(nativeAd);
+
+                        Ad_Layout.removeAllViews();
+                        Ad_Layout.addView(templateView);
+                        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
+                                .getLayoutParams();
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
+
+                        Ad_Layout.setLayoutParams(relativeParams);
+
+                        templateView.setVisibility(View.VISIBLE);
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Ad_Layout.removeAllViews();
+                        Native_Auto_Setup111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+
+    }
+
+    public void Native_Auto_Setup111(Context nContext, final RelativeLayout Ad_Layout,
+                                     int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
+
+        Log.e("Native 111", "Native 111");
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getNN1(nContext) == 0) {
+
+            Native_ID = Butter.getN11(nContext);
+
+            Butter.setNN1(nContext, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(nContext);
+
+            Butter.setNN1(nContext, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(nContext, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        TemplateView templateView = new TemplateView(nContext, Native_Type);
+
+                        templateView.setStyles(styles);
+                        templateView.setNativeAd(nativeAd);
+
+                        Ad_Layout.removeAllViews();
+                        Ad_Layout.addView(templateView);
+                        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
+                                .getLayoutParams();
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
+
+                        Ad_Layout.setLayoutParams(relativeParams);
+
+                        templateView.setVisibility(View.VISIBLE);
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Ad_Layout.removeAllViews();
+                        Native_Auto_Setup1111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+
+    }
+
+    public void Native_Auto_Setup1111(Context nContext, final RelativeLayout Ad_Layout,
+                                      int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
+
+        Log.e("Native 1111", "Native 1111");
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getNN1(nContext) == 0) {
+
+            Native_ID = Butter.getN11(nContext);
+
+            Butter.setNN1(nContext, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(nContext);
+
+            Butter.setNN1(nContext, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(nContext, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        TemplateView templateView = new TemplateView(nContext, Native_Type);
+
+                        templateView.setStyles(styles);
+                        templateView.setNativeAd(nativeAd);
+
+                        Ad_Layout.removeAllViews();
+                        Ad_Layout.addView(templateView);
+                        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
+                                .getLayoutParams();
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
+
+                        Ad_Layout.setLayoutParams(relativeParams);
+
+                        templateView.setVisibility(View.VISIBLE);
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Ad_Layout.removeAllViews();
+                        Native_Auto_Setup11111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+
+    }
+
+    public void Native_Auto_Setup11111(Context nContext, final RelativeLayout Ad_Layout,
+                                       int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
+
+        Log.e("Native 11111", "Native 11111");
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getNN1(nContext) == 0) {
+
+            Native_ID = Butter.getN11(nContext);
+
+            Butter.setNN1(nContext, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(nContext);
+
+            Butter.setNN1(nContext, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(nContext, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        TemplateView templateView = new TemplateView(nContext, Native_Type);
+
+                        templateView.setStyles(styles);
+                        templateView.setNativeAd(nativeAd);
+
+                        Ad_Layout.removeAllViews();
+                        Ad_Layout.addView(templateView);
+                        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
+                                .getLayoutParams();
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
 
                         Ad_Layout.setLayoutParams(relativeParams);
 
@@ -4810,6 +8655,7 @@ public class Pizza {
     public void Native_Auto_Setup2(Context nContext, final RelativeLayout Ad_Layout,
                                    int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
 
+        Log.e("Native 2", "Native 2");
 
         if (Exit_Menu_Decided == 100) {
 
@@ -4851,7 +8697,81 @@ public class Pizza {
                         Ad_Layout.addView(templateView);
                         RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
                                 .getLayoutParams();
-                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin); // left, top, right,
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
+
+                        Ad_Layout.setLayoutParams(relativeParams);
+
+                        templateView.setVisibility(View.VISIBLE);
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Ad_Layout.removeAllViews();
+                        Native_Auto_Setup22(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+
+    }
+
+    public void Native_Auto_Setup22(Context nContext, final RelativeLayout Ad_Layout,
+                                    int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
+
+        Log.e("Native 22", "Native 22");
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getNN2(nContext) == 0) {
+
+            Native_ID = Butter.getN22(nContext);
+
+            Butter.setNN2(nContext, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN222(nContext);
+
+            Butter.setNN2(nContext, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(nContext, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        TemplateView templateView = new TemplateView(nContext, Native_Type);
+
+                        templateView.setStyles(styles);
+                        templateView.setNativeAd(nativeAd);
+
+                        Ad_Layout.removeAllViews();
+                        Ad_Layout.addView(templateView);
+                        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
+                                .getLayoutParams();
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
 
                         Ad_Layout.setLayoutParams(relativeParams);
 
@@ -4883,6 +8803,7 @@ public class Pizza {
     public void Native_Auto_Setup3(Context nContext, final RelativeLayout Ad_Layout,
                                    int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
 
+        Log.e("Native 3", "Native 3");
 
         if (Exit_Menu_Decided == 100) {
 
@@ -4924,7 +8845,7 @@ public class Pizza {
                         Ad_Layout.addView(templateView);
                         RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) Ad_Layout
                                 .getLayoutParams();
-                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin); // left, top, right,
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
 
                         Ad_Layout.setLayoutParams(relativeParams);
 
@@ -5002,6 +8923,327 @@ public class Pizza {
     public void Native_Auto_Setup_Linear1(Context nContext, final RelativeLayout Ad_Layout,
                                           int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
 
+        Log.e("Native 1 Linear", "Native 1 Linear");
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getNN1(nContext) == 0) {
+
+            Native_ID = Butter.getN11(nContext);
+
+            Butter.setNN1(nContext, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(nContext);
+
+            Butter.setNN1(nContext, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(nContext, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        TemplateView templateView = new TemplateView(nContext, Native_Type);
+
+                        templateView.setStyles(styles);
+                        templateView.setNativeAd(nativeAd);
+
+                        Ad_Layout.removeAllViews();
+                        Ad_Layout.addView(templateView);
+                        LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) Ad_Layout
+                                .getLayoutParams();
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
+
+                        Ad_Layout.setLayoutParams(relativeParams);
+
+                        templateView.setVisibility(View.VISIBLE);
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Ad_Layout.removeAllViews();
+
+                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                            Native_Auto_Setup_Linear22(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("2")) {
+                            Native_Auto_Setup_Linear11111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("3")) {
+                            Native_Auto_Setup_Linear1111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("4")) {
+                            Native_Auto_Setup_Linear111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("5")) {
+                            Native_Auto_Setup_Linear11(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("6")) {
+                            Native_Auto_Setup_Linear2(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("7")) {
+                            Native_Auto_Setup_Linear11111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("8")) {
+                            Native_Auto_Setup_Linear1111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        }
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+
+    }
+
+    public void Native_Auto_Setup_Linear11(Context nContext, final RelativeLayout Ad_Layout,
+                                           int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
+
+        Log.e("Native 11 Linear", "Native 11 Linear");
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getNN1(nContext) == 0) {
+
+            Native_ID = Butter.getN11(nContext);
+
+            Butter.setNN1(nContext, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(nContext);
+
+            Butter.setNN1(nContext, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(nContext, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        TemplateView templateView = new TemplateView(nContext, Native_Type);
+
+                        templateView.setStyles(styles);
+                        templateView.setNativeAd(nativeAd);
+
+                        Ad_Layout.removeAllViews();
+                        Ad_Layout.addView(templateView);
+                        LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) Ad_Layout
+                                .getLayoutParams();
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
+
+                        Ad_Layout.setLayoutParams(relativeParams);
+
+                        templateView.setVisibility(View.VISIBLE);
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Ad_Layout.removeAllViews();
+                        Native_Auto_Setup_Linear111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+
+    }
+
+    public void Native_Auto_Setup_Linear111(Context nContext, final RelativeLayout Ad_Layout,
+                                            int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
+
+        Log.e("Native 111 Linear", "Native 111 Linear");
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getNN1(nContext) == 0) {
+
+            Native_ID = Butter.getN11(nContext);
+
+            Butter.setNN1(nContext, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(nContext);
+
+            Butter.setNN1(nContext, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(nContext, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        TemplateView templateView = new TemplateView(nContext, Native_Type);
+
+                        templateView.setStyles(styles);
+                        templateView.setNativeAd(nativeAd);
+
+                        Ad_Layout.removeAllViews();
+                        Ad_Layout.addView(templateView);
+                        LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) Ad_Layout
+                                .getLayoutParams();
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
+
+                        Ad_Layout.setLayoutParams(relativeParams);
+
+                        templateView.setVisibility(View.VISIBLE);
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Ad_Layout.removeAllViews();
+                        Native_Auto_Setup_Linear1111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+
+    }
+
+    public void Native_Auto_Setup_Linear1111(Context nContext, final RelativeLayout Ad_Layout,
+                                             int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
+
+        Log.e("Native 1111 Linear", "Native 1111 Linear");
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getNN1(nContext) == 0) {
+
+            Native_ID = Butter.getN11(nContext);
+
+            Butter.setNN1(nContext, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN111(nContext);
+
+            Butter.setNN1(nContext, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(nContext, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        TemplateView templateView = new TemplateView(nContext, Native_Type);
+
+                        templateView.setStyles(styles);
+                        templateView.setNativeAd(nativeAd);
+
+                        Ad_Layout.removeAllViews();
+                        Ad_Layout.addView(templateView);
+                        LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) Ad_Layout
+                                .getLayoutParams();
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
+
+                        Ad_Layout.setLayoutParams(relativeParams);
+
+                        templateView.setVisibility(View.VISIBLE);
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Ad_Layout.removeAllViews();
+                        Native_Auto_Setup_Linear11111(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+
+    }
+
+    public void Native_Auto_Setup_Linear11111(Context nContext, final RelativeLayout Ad_Layout,
+                                              int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
+
+        Log.e("Native 11111 Linear", "Native 11111 Linear");
 
         if (Exit_Menu_Decided == 100) {
 
@@ -5075,6 +9317,81 @@ public class Pizza {
     public void Native_Auto_Setup_Linear2(Context nContext, final RelativeLayout Ad_Layout,
                                           int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
 
+        Log.e("Native 2 Linear", "Native 2 Linear");
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (Butter.getNN2(nContext) == 0) {
+
+            Native_ID = Butter.getN22(nContext);
+
+            Butter.setNN2(nContext, 1);
+
+
+        } else {
+
+            Native_ID = Butter.getN222(nContext);
+
+            Butter.setNN2(nContext, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(nContext, Native_ID)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        TemplateView templateView = new TemplateView(nContext, Native_Type);
+
+                        templateView.setStyles(styles);
+                        templateView.setNativeAd(nativeAd);
+
+                        Ad_Layout.removeAllViews();
+                        Ad_Layout.addView(templateView);
+                        LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) Ad_Layout
+                                .getLayoutParams();
+                        relativeParams.setMargins(0, Bottom_Ad_Margin, 0, Top_Ad_Margin);
+
+                        Ad_Layout.setLayoutParams(relativeParams);
+
+                        templateView.setVisibility(View.VISIBLE);
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Ad_Layout.removeAllViews();
+                        Native_Auto_Setup_Linear22(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+
+    }
+
+    public void Native_Auto_Setup_Linear22(Context nContext, final RelativeLayout Ad_Layout,
+                                           int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
+
+        Log.e("Native 22 Linear", "Native 22 Linear");
 
         if (Exit_Menu_Decided == 100) {
 
@@ -5148,6 +9465,7 @@ public class Pizza {
     public void Native_Auto_Setup_Linear3(Context nContext, final RelativeLayout Ad_Layout,
                                           int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
 
+        Log.e("Native 3 Linear", "Native 3 Linear");
 
         if (Exit_Menu_Decided == 100) {
 
@@ -5226,6 +9544,7 @@ public class Pizza {
 
     }
 
+
     public void Start(Context aContext, String App_Name) {
 
 
@@ -5238,7 +9557,7 @@ public class Pizza {
 
             int width = 480, Height = 800;
 
-            final Dialog builder = new Dialog(aContext);
+            final Dialog builder = new Dialog(aContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
             builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
             builder.getWindow().setBackgroundDrawable(
                     new ColorDrawable(Color.BLACK));
@@ -5254,7 +9573,7 @@ public class Pizza {
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
-                    // nothing;
+
                 }
             });
 
@@ -5265,7 +9584,7 @@ public class Pizza {
             width = displayMetrics.widthPixels;
             Height = displayMetrics.heightPixels;
 
-            // Background
+
             final RelativeLayout RL = new RelativeLayout(aContext);
             RL.setBackgroundColor(Color.WHITE);
             RL.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
@@ -5288,7 +9607,7 @@ public class Pizza {
 
                             TemplateView templateView = new TemplateView(aContext, 0);
 
-                            //TemplateView templateView = findViewById(R.id.my_template);
+
                             templateView.setStyles(styles);
                             templateView.setNativeAd(nativeAd);
 
@@ -5296,7 +9615,7 @@ public class Pizza {
                             RL.addView(templateView);
 
                             templateView.setVisibility(View.VISIBLE);
-                            //Toast.makeText(nContext, "Native Ad is loaded, now you can show the native ad", Toast.LENGTH_LONG).show();
+
 
                         }
 
@@ -5304,7 +9623,7 @@ public class Pizza {
                     .withAdListener(new AdListener() {
                         @Override
                         public void onAdFailedToLoad(LoadAdError adError) {
-                            // Handle the failure by logging, altering the UI, and so on.
+
 
                             RL.removeAllViews();
                             Banner(RL, 4);
@@ -5312,8 +9631,8 @@ public class Pizza {
                         }
                     })
                     .withNativeAdOptions(new NativeAdOptions.Builder()
-                            // Methods in the NativeAdOptions.Builder class can be
-                            // used here to specify individual options settings.
+
+
                             .build())
                     .build();
 
@@ -5327,6 +9646,7 @@ public class Pizza {
         }
 
     }
+
 
     public void Pre_App_Open_Show(Activity currentActivity) {
 
@@ -5345,7 +9665,16 @@ public class Pizza {
                     if (Server_Yes_No == 1 || Server_Yes_No == 0) {
 
 
-                        if ((Butter.getSetup(currentActivity)).equals("1")) {
+                        if ((Butter.getSetup(currentActivity)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
 
                             Pre_App_Open_Show_Setup(currentActivity);
 
@@ -5377,6 +9706,7 @@ public class Pizza {
 
             return;
         }
+        Log.e("AO_SHOW_Normal", "AO_SHOW_Normal");
         if (!isShowingAd && appOpenAd != null) {
 
 
@@ -5438,7 +9768,7 @@ public class Pizza {
 
                     @Override
                     public void onAppOpenAdFailedToLoad(LoadAdError loadAdError) {
-                        // Handle the error.
+
 
                         tappxInterstitial_preload = new TappxInterstitial(mContext,
                                 Butter.gettx(Contextt));
@@ -5462,21 +9792,21 @@ public class Pizza {
                                     @Override
                                     public void onInterstitialClicked(
                                             TappxInterstitial arg0) {
-                                        // TODO Auto-generated method stub
+
 
                                     }
 
                                     @Override
                                     public void onInterstitialDismissed(
                                             TappxInterstitial arg0) {
-                                        // TODO Auto-generated method stub
+
 
                                     }
 
                                     @Override
                                     public void onInterstitialShown(
                                             TappxInterstitial arg0) {
-                                        // TODO Auto-generated method stub
+
 
                                     }
 
@@ -5501,7 +9831,7 @@ public class Pizza {
             return;
         }
 
-        if (appOpenAd3 != null) {
+        if (appOpenAd != null) {
             return;
         }
 
@@ -5524,20 +9854,262 @@ public class Pizza {
         loadCallback3 =
                 new AppOpenAd.AppOpenAdLoadCallback() {
 
-
                     @Override
                     public void onAppOpenAdLoaded(AppOpenAd ad) {
-                        appOpenAd3 = ad;
-
-                        App_Open_Setup = 3;
+                        appOpenAd = ad;
+                        App_Open_Setup = 1;
+                        Log.e("AO_LOAD1", "AO_LOAD1");
 
                     }
 
 
                     @Override
                     public void onAppOpenAdFailedToLoad(LoadAdError loadAdError) {
-                        // Handle the error.
-                        App_Open_Setup = 33;
+
+
+                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                            Pre_App_Open_Load_Setup22(mContext);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("2")) {
+                            Pre_App_Open_Load_Setup11111(mContext);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("3")) {
+                            Pre_App_Open_Load_Setup1111(mContext);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("4")) {
+                            Pre_App_Open_Load_Setup111(mContext);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("5")) {
+                            Pre_App_Open_Load_Setup11(mContext);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("6")) {
+                            Pre_App_Open_Load_Setup2(mContext);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("7")) {
+                            Pre_App_Open_Load_Setup11111(mContext);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("8")) {
+                            Pre_App_Open_Load_Setup1111(mContext);
+                        }
+
+                    }
+
+                };
+        AdRequest request = new AdRequest.Builder().build();
+        AppOpenAd.load(
+                mContext, App_Open_ID, request,
+                AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT, loadCallback3);
+
+
+    }
+
+    public void Pre_App_Open_Load_Setup11(Context mContext) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (appOpenAd != null) {
+            return;
+        }
+
+        String App_Open_ID = "";
+
+        if (Butter.getAOAO1(mContext) == 0) {
+
+            App_Open_ID = Butter.getAO11(mContext);
+
+            Butter.setAOAO1(mContext, 1);
+
+        } else {
+
+            App_Open_ID = Butter.getAO111(mContext);
+
+            Butter.setAOAO1(mContext, 0);
+
+        }
+
+        loadCallback3 =
+                new AppOpenAd.AppOpenAdLoadCallback() {
+
+                    @Override
+                    public void onAppOpenAdLoaded(AppOpenAd ad) {
+                        appOpenAd = ad;
+                        App_Open_Setup = 11;
+                        Log.e("AO_LOAD11", "AO_LOAD11");
+
+                    }
+
+
+                    @Override
+                    public void onAppOpenAdFailedToLoad(LoadAdError loadAdError) {
+
+                        Pre_App_Open_Load_Setup111(mContext);
+
+                    }
+
+                };
+        AdRequest request = new AdRequest.Builder().build();
+        AppOpenAd.load(
+                mContext, App_Open_ID, request,
+                AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT, loadCallback3);
+
+
+    }
+
+    public void Pre_App_Open_Load_Setup111(Context mContext) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (appOpenAd != null) {
+            return;
+        }
+
+        String App_Open_ID = "";
+
+        if (Butter.getAOAO1(mContext) == 0) {
+
+            App_Open_ID = Butter.getAO11(mContext);
+
+            Butter.setAOAO1(mContext, 1);
+
+        } else {
+
+            App_Open_ID = Butter.getAO111(mContext);
+
+            Butter.setAOAO1(mContext, 0);
+
+        }
+
+        loadCallback3 =
+                new AppOpenAd.AppOpenAdLoadCallback() {
+
+                    @Override
+                    public void onAppOpenAdLoaded(AppOpenAd ad) {
+                        appOpenAd = ad;
+                        App_Open_Setup = 111;
+                        Log.e("AO_LOAD111", "AO_LOAD111");
+
+                    }
+
+
+                    @Override
+                    public void onAppOpenAdFailedToLoad(LoadAdError loadAdError) {
+
+                        Pre_App_Open_Load_Setup1111(mContext);
+
+                    }
+
+                };
+        AdRequest request = new AdRequest.Builder().build();
+        AppOpenAd.load(
+                mContext, App_Open_ID, request,
+                AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT, loadCallback3);
+
+
+    }
+
+    public void Pre_App_Open_Load_Setup1111(Context mContext) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (appOpenAd != null) {
+            return;
+        }
+
+        String App_Open_ID = "";
+
+        if (Butter.getAOAO1(mContext) == 0) {
+
+            App_Open_ID = Butter.getAO11(mContext);
+
+            Butter.setAOAO1(mContext, 1);
+
+        } else {
+
+            App_Open_ID = Butter.getAO111(mContext);
+
+            Butter.setAOAO1(mContext, 0);
+
+        }
+
+        loadCallback3 =
+                new AppOpenAd.AppOpenAdLoadCallback() {
+
+                    @Override
+                    public void onAppOpenAdLoaded(AppOpenAd ad) {
+                        appOpenAd = ad;
+                        App_Open_Setup = 1111;
+                        Log.e("AO_LOAD1111", "AO_LOAD1111");
+
+                    }
+
+
+                    @Override
+                    public void onAppOpenAdFailedToLoad(LoadAdError loadAdError) {
+
+                        Pre_App_Open_Load_Setup11111(mContext);
+
+                    }
+
+                };
+        AdRequest request = new AdRequest.Builder().build();
+        AppOpenAd.load(
+                mContext, App_Open_ID, request,
+                AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT, loadCallback3);
+
+
+    }
+
+    public void Pre_App_Open_Load_Setup11111(Context mContext) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (appOpenAd != null) {
+            return;
+        }
+
+        String App_Open_ID = "";
+
+        if (Butter.getAOAO1(mContext) == 0) {
+
+            App_Open_ID = Butter.getAO11(mContext);
+
+            Butter.setAOAO1(mContext, 1);
+
+        } else {
+
+            App_Open_ID = Butter.getAO111(mContext);
+
+            Butter.setAOAO1(mContext, 0);
+
+        }
+
+        loadCallback3 =
+                new AppOpenAd.AppOpenAdLoadCallback() {
+
+                    @Override
+                    public void onAppOpenAdLoaded(AppOpenAd ad) {
+                        appOpenAd = ad;
+                        App_Open_Setup = 11111;
+                        Log.e("AO_LOAD1", "AO_LOAD1");
+
+                    }
+
+
+                    @Override
+                    public void onAppOpenAdFailedToLoad(LoadAdError loadAdError) {
+
                         Pre_App_Open_Load_Setup2(mContext);
 
                     }
@@ -5558,7 +10130,7 @@ public class Pizza {
             return;
         }
 
-        if (appOpenAd2 != null) {
+        if (appOpenAd != null) {
             return;
         }
 
@@ -5584,17 +10156,74 @@ public class Pizza {
 
                     @Override
                     public void onAppOpenAdLoaded(AppOpenAd ad) {
-                        appOpenAd2 = ad;
+                        appOpenAd = ad;
 
                         App_Open_Setup = 2;
+                        Log.e("AO_LOAD2", "AO_LOAD2");
 
                     }
 
 
                     @Override
                     public void onAppOpenAdFailedToLoad(LoadAdError loadAdError) {
-                        // Handle the error.
+
+                        Pre_App_Open_Load_Setup22(mContext);
+
+                    }
+
+                };
+        AdRequest request = new AdRequest.Builder().build();
+        AppOpenAd.load(
+                mContext, App_Open_ID, request,
+                AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT, loadCallback2);
+
+
+    }
+
+    public void Pre_App_Open_Load_Setup22(Context mContext) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (appOpenAd != null) {
+            return;
+        }
+
+        String App_Open_ID = "";
+
+        if (Butter.getAOAO2(mContext) == 0) {
+
+            App_Open_ID = Butter.getAO22(mContext);
+
+            Butter.setAOAO2(mContext, 1);
+
+        } else {
+
+            App_Open_ID = Butter.getAO222(mContext);
+
+            Butter.setAOAO2(mContext, 0);
+
+        }
+
+        loadCallback2 =
+                new AppOpenAd.AppOpenAdLoadCallback() {
+
+
+                    @Override
+                    public void onAppOpenAdLoaded(AppOpenAd ad) {
+                        appOpenAd = ad;
+
                         App_Open_Setup = 22;
+                        Log.e("AO_LOAD22", "AO_LOAD22");
+
+                    }
+
+
+                    @Override
+                    public void onAppOpenAdFailedToLoad(LoadAdError loadAdError) {
+
                         Pre_App_Open_Load_Setup3(mContext);
 
                     }
@@ -5615,7 +10244,7 @@ public class Pizza {
             return;
         }
 
-        if (appOpenAd1 != null) {
+        if (appOpenAd != null) {
             return;
         }
 
@@ -5641,17 +10270,17 @@ public class Pizza {
 
                     @Override
                     public void onAppOpenAdLoaded(AppOpenAd ad) {
-                        appOpenAd1 = ad;
+                        appOpenAd = ad;
 
-                        App_Open_Setup = 1;
+                        App_Open_Setup = 3;
+                        Log.e("AO_LOAD3", "AO_LOAD3");
 
                     }
 
 
                     @Override
                     public void onAppOpenAdFailedToLoad(LoadAdError loadAdError) {
-                        // Handle the error.
-                        App_Open_Setup = 11;
+
 
                         tappxInterstitial_preload = new TappxInterstitial(mContext,
                                 Butter.gettx(Contextt));
@@ -5661,7 +10290,7 @@ public class Pizza {
                                     @Override
                                     public void onInterstitialLoaded(
                                             TappxInterstitial tappxInterstitial) {
-
+                                        App_Open_Setup = 0;
 
                                     }
 
@@ -5675,21 +10304,21 @@ public class Pizza {
                                     @Override
                                     public void onInterstitialClicked(
                                             TappxInterstitial arg0) {
-                                        // TODO Auto-generated method stub
+
 
                                     }
 
                                     @Override
                                     public void onInterstitialDismissed(
                                             TappxInterstitial arg0) {
-                                        // TODO Auto-generated method stub
+
 
                                     }
 
                                     @Override
                                     public void onInterstitialShown(
                                             TappxInterstitial arg0) {
-                                        // TODO Auto-generated method stub
+
 
                                     }
 
@@ -5707,26 +10336,32 @@ public class Pizza {
     }
 
     public void Pre_App_Open_Show_Setup(Activity currentActivity) {
-        // Only show ad if there is not already an app open ad currently showing
-        // and an ad is available.
+
 
         if (Exit_Menu_Decided == 100) {
 
             return;
         }
 
-        if (App_Open_Setup == 3) {
+        if (App_Open_Setup == 1 ||
+                App_Open_Setup == 11 ||
+                App_Open_Setup == 111 ||
+                App_Open_Setup == 1111 ||
+                App_Open_Setup == 11111 ||
+                App_Open_Setup == 2 ||
+                App_Open_Setup == 22 ||
+                App_Open_Setup == 3) {
 
-            if (!isShowingAd3 && appOpenAd3 != null) {
+            if (!isShowingAd && appOpenAd != null) {
 
 
                 FullScreenContentCallback fullScreenContentCallback3 =
                         new FullScreenContentCallback() {
                             @Override
                             public void onAdDismissedFullScreenContent() {
-                                // Set the reference to null so isAdAvailable() returns false.
-                                appOpenAd3 = null;
-                                isShowingAd3 = false;
+
+                                appOpenAd = null;
+                                isShowingAd = false;
                                 Pre_App_Open_Load_Setup1(currentActivity);
                             }
 
@@ -5736,78 +10371,20 @@ public class Pizza {
 
                             @Override
                             public void onAdShowedFullScreenContent() {
-                                isShowingAd3 = true;
+                                isShowingAd = true;
                             }
                         };
 
-                appOpenAd3.show(currentActivity, fullScreenContentCallback3);
+                appOpenAd.show(currentActivity, fullScreenContentCallback3);
 
             }
 
         }
-        if (App_Open_Setup == 33) {
-            // Do For fail
-        }
-        if (App_Open_Setup == 2) {
-            if (!isShowingAd2 && appOpenAd2 != null) {
 
 
-                FullScreenContentCallback fullScreenContentCallback2 =
-                        new FullScreenContentCallback() {
-                            @Override
-                            public void onAdDismissedFullScreenContent() {
-                                // Set the reference to null so isAdAvailable() returns false.
-                                appOpenAd2 = null;
-                                isShowingAd2 = false;
-                                Pre_App_Open_Load_Setup1(currentActivity);
-                            }
+        if (App_Open_Setup == 0) {
 
-                            @Override
-                            public void onAdFailedToShowFullScreenContent(AdError adError) {
-                            }
-
-                            @Override
-                            public void onAdShowedFullScreenContent() {
-                                isShowingAd2 = true;
-                            }
-                        };
-
-                appOpenAd2.show(currentActivity, fullScreenContentCallback2);
-
-            }
-        }
-        if (App_Open_Setup == 22) {
-            // Do For fail
-        }
-        if (App_Open_Setup == 1) {
-            if (!isShowingAd1 && appOpenAd1 != null) {
-
-
-                FullScreenContentCallback fullScreenContentCallback1 =
-                        new FullScreenContentCallback() {
-                            @Override
-                            public void onAdDismissedFullScreenContent() {
-                                // Set the reference to null so isAdAvailable() returns false.
-                                appOpenAd1 = null;
-                                isShowingAd1 = false;
-                                Pre_App_Open_Load_Setup1(currentActivity);
-                            }
-
-                            @Override
-                            public void onAdFailedToShowFullScreenContent(AdError adError) {
-                            }
-
-                            @Override
-                            public void onAdShowedFullScreenContent() {
-                                isShowingAd1 = true;
-                            }
-                        };
-
-                appOpenAd1.show(currentActivity, fullScreenContentCallback1);
-
-            }
-        }
-        if (App_Open_Setup == 11) {
+            Log.e("AO_FAIL", "AO_FAIL");
             Pre_App_Open_Load_Setup1(currentActivity);
             if (tappxInterstitial_preload != null)
                 tappxInterstitial_preload.show();
@@ -5816,6 +10393,7 @@ public class Pizza {
 
     }
 
+
     public void Reward_Inter_Show(Activity mContext, String title, String description, int Popupmenu_Type) {
 
         if (Exit_Menu_Decided == 100) {
@@ -5823,7 +10401,16 @@ public class Pizza {
             return;
         }
 
-        if ((Butter.getSetup(mContext)).equals("1")) {
+        if ((Butter.getSetup(mContext)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
 
             CustomProgressDialogue progressDialog = new CustomProgressDialogue(mContext, Popupmenu_Type, title, description);
 
@@ -5842,6 +10429,7 @@ public class Pizza {
 
     public void Reward_Inter_Show_Normal(Activity mContext, String title, String description, int Popupmenu_Type) {
 
+        Log.e("IRD Normal", "IRD Normal");
 
         if (Exit_Menu_Decided == 100) {
 
@@ -5886,8 +10474,7 @@ public class Pizza {
                     public void onAdFailedToLoad(LoadAdError loadAdError) {
                         rewardedInterstitialAd = null;
 
-
-                        Tappx_Reward(mContext, title, description, Popupmenu_Type, progressDialog);
+                        progressDialog.dismiss();
 
 
                     }
@@ -5896,16 +10483,9 @@ public class Pizza {
 
     }
 
-    public void Tappx_Reward(Activity mContext, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
-
-        progressDialog.dismiss();
-
-        //TappxRewardedVideo rewardedVideo;
-
-    }
-
     public void Reward_Inter_Show_Setup1(Activity mContext, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
 
+        Log.e("IRD 1", "IRD 1");
 
         String Inter_Reward_Ad_ID;
 
@@ -5946,11 +10526,276 @@ public class Pizza {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-
-
                                 progressDialog.dismiss();
+                            }
+
+                        }, 500);
 
 
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                        rewardedInterstitialAd = null;
+
+                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                            Reward_Inter_Show_Setup22(mContext, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("2")) {
+                            Reward_Inter_Show_Setup11111(mContext, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("3")) {
+                            Reward_Inter_Show_Setup1111(mContext, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("4")) {
+                            Reward_Inter_Show_Setup111(mContext, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("5")) {
+                            Reward_Inter_Show_Setup11(mContext, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("6")) {
+                            Reward_Inter_Show_Setup2(mContext, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("7")) {
+                            Reward_Inter_Show_Setup11111(mContext, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("8")) {
+                            Reward_Inter_Show_Setup1111(mContext, title, description, Popupmenu_Type, progressDialog);
+                        }
+
+                    }
+                });
+
+
+    }
+
+    public void Reward_Inter_Show_Setup11(Activity mContext, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        Log.e("IRD 11", "IRD 11");
+
+        String Inter_Reward_Ad_ID;
+
+        if (Butter.getIIRRDD1(mContext) == 0) {
+
+            Inter_Reward_Ad_ID = Butter.getIRD11(mContext);
+
+            Butter.setIIRRDD1(mContext, 1);
+
+
+        } else {
+
+            Inter_Reward_Ad_ID = Butter.getIRD111(mContext);
+
+            Butter.setIIRRDD1(mContext, 0);
+
+
+        }
+
+
+        RewardedInterstitialAd.load(mContext, Inter_Reward_Ad_ID,
+                new AdRequest.Builder().build(), new RewardedInterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(RewardedInterstitialAd ad) {
+
+
+                        rewardedInterstitialAd = ad;
+
+                        rewardedInterstitialAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+
+                            }
+                        });
+
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+
+                        }, 500);
+
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                        rewardedInterstitialAd = null;
+                        Reward_Inter_Show_Setup111(mContext, title, description, Popupmenu_Type, progressDialog);
+                    }
+                });
+
+
+    }
+
+    public void Reward_Inter_Show_Setup111(Activity mContext, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        Log.e("IRD 111", "IRD 111");
+
+        String Inter_Reward_Ad_ID;
+
+        if (Butter.getIIRRDD1(mContext) == 0) {
+
+            Inter_Reward_Ad_ID = Butter.getIRD11(mContext);
+
+            Butter.setIIRRDD1(mContext, 1);
+
+
+        } else {
+
+            Inter_Reward_Ad_ID = Butter.getIRD111(mContext);
+
+            Butter.setIIRRDD1(mContext, 0);
+
+
+        }
+
+
+        RewardedInterstitialAd.load(mContext, Inter_Reward_Ad_ID,
+                new AdRequest.Builder().build(), new RewardedInterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(RewardedInterstitialAd ad) {
+
+
+                        rewardedInterstitialAd = ad;
+
+                        rewardedInterstitialAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+
+                            }
+                        });
+
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+
+                        }, 500);
+
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                        rewardedInterstitialAd = null;
+                        Reward_Inter_Show_Setup1111(mContext, title, description, Popupmenu_Type, progressDialog);
+                    }
+                });
+
+
+    }
+
+    public void Reward_Inter_Show_Setup1111(Activity mContext, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        Log.e("IRD 1111", "IRD 1111");
+
+        String Inter_Reward_Ad_ID;
+
+        if (Butter.getIIRRDD1(mContext) == 0) {
+
+            Inter_Reward_Ad_ID = Butter.getIRD11(mContext);
+
+            Butter.setIIRRDD1(mContext, 1);
+
+
+        } else {
+
+            Inter_Reward_Ad_ID = Butter.getIRD111(mContext);
+
+            Butter.setIIRRDD1(mContext, 0);
+
+
+        }
+
+
+        RewardedInterstitialAd.load(mContext, Inter_Reward_Ad_ID,
+                new AdRequest.Builder().build(), new RewardedInterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(RewardedInterstitialAd ad) {
+
+
+                        rewardedInterstitialAd = ad;
+
+                        rewardedInterstitialAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+
+                            }
+                        });
+
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+
+                        }, 500);
+
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                        rewardedInterstitialAd = null;
+                        Reward_Inter_Show_Setup11111(mContext, title, description, Popupmenu_Type, progressDialog);
+                    }
+                });
+
+
+    }
+
+    public void Reward_Inter_Show_Setup11111(Activity mContext, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        Log.e("IRD 11111", "IRD 11111");
+
+        String Inter_Reward_Ad_ID;
+
+        if (Butter.getIIRRDD1(mContext) == 0) {
+
+            Inter_Reward_Ad_ID = Butter.getIRD11(mContext);
+
+            Butter.setIIRRDD1(mContext, 1);
+
+
+        } else {
+
+            Inter_Reward_Ad_ID = Butter.getIRD111(mContext);
+
+            Butter.setIIRRDD1(mContext, 0);
+
+
+        }
+
+
+        RewardedInterstitialAd.load(mContext, Inter_Reward_Ad_ID,
+                new AdRequest.Builder().build(), new RewardedInterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(RewardedInterstitialAd ad) {
+
+
+                        rewardedInterstitialAd = ad;
+
+                        rewardedInterstitialAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+
+                            }
+                        });
+
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
                             }
 
                         }, 500);
@@ -5970,6 +10815,72 @@ public class Pizza {
 
     public void Reward_Inter_Show_Setup2(Activity mContext, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
 
+        Log.e("IRD 2", "IRD 2");
+
+        String Inter_Reward_Ad_ID;
+
+        if (Butter.getIIRRDD2(mContext) == 0) {
+
+            Inter_Reward_Ad_ID = Butter.getIRD22(mContext);
+
+            Butter.setIIRRDD2(mContext, 1);
+
+
+        } else {
+
+            Inter_Reward_Ad_ID = Butter.getIRD222(mContext);
+
+            Butter.setIIRRDD2(mContext, 0);
+
+
+        }
+
+
+        RewardedInterstitialAd.load(mContext, Inter_Reward_Ad_ID,
+                new AdRequest.Builder().build(), new RewardedInterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(RewardedInterstitialAd ad) {
+
+
+                        rewardedInterstitialAd = ad;
+
+                        rewardedInterstitialAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+
+                            }
+                        });
+
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+
+                                progressDialog.dismiss();
+
+
+                            }
+
+                        }, 1000);
+
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                        rewardedInterstitialAd = null;
+                        Reward_Inter_Show_Setup22(mContext, title, description, Popupmenu_Type, progressDialog);
+                    }
+                });
+
+
+    }
+
+    public void Reward_Inter_Show_Setup22(Activity mContext, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        Log.e("IRD 22", "IRD 22");
 
         String Inter_Reward_Ad_ID;
 
@@ -6034,6 +10945,7 @@ public class Pizza {
 
     public void Reward_Inter_Show_Setup3(Activity mContext, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
 
+        Log.e("IRD 3", "IRD 3");
 
         String Inter_Reward_Ad_ID;
 
@@ -6096,6 +11008,7 @@ public class Pizza {
 
     }
 
+
     public void Reward_Inter_Show_with_Dialog(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type) {
 
         if (Exit_Menu_Decided == 100) {
@@ -6103,7 +11016,16 @@ public class Pizza {
             return;
         }
 
-        if ((Butter.getSetup(mContext)).equals("1")) {
+        if ((Butter.getSetup(mContext)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
 
             CustomProgressDialogue progressDialog = new CustomProgressDialogue(mContext, Popupmenu_Type, title, description);
 
@@ -6146,6 +11068,7 @@ public class Pizza {
 
     public void Reward_Inter_Show_with_Dialog_Normal(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type) {
 
+        Log.e("IRWW Normal", "IRWW Normal");
 
         if (Exit_Menu_Decided == 100) {
 
@@ -6178,9 +11101,11 @@ public class Pizza {
                                 adRequest, new RewardedInterstitialAdLoadCallback() {
                                     @Override
                                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
                                         mrewardedInterstitialAd = null;
 
 
+                                        Log.e("TAG", "onAdFailedToLoad: " + loadAdError.getMessage());
                                         onRewardgetListner.OnReward(false);
                                         progressDialog.dismiss();
                                     }
@@ -6232,6 +11157,7 @@ public class Pizza {
 
     public void Reward_Inter_Show_with_Dialog_Setup1(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
 
+        Log.e("IRWW 1", "IRWW 1");
 
         String Inter_Reward_Ad_ID;
 
@@ -6283,7 +11209,298 @@ public class Pizza {
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error.
+
+                        mrewardedInterstitialAd = null;
+
+                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                            Reward_Inter_Show_with_Dialog_Setup22(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("2")) {
+                            Reward_Inter_Show_with_Dialog_Setup11111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("3")) {
+                            Reward_Inter_Show_with_Dialog_Setup1111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("4")) {
+                            Reward_Inter_Show_with_Dialog_Setup111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("5")) {
+                            Reward_Inter_Show_with_Dialog_Setup11(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("6")) {
+                            Reward_Inter_Show_with_Dialog_Setup2(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("7")) {
+                            Reward_Inter_Show_with_Dialog_Setup11111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("8")) {
+                            Reward_Inter_Show_with_Dialog_Setup1111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+
+                    }
+
+
+                });
+
+
+    }
+
+    public void Reward_Inter_Show_with_Dialog_Setup11(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        Log.e("IRWW 11", "IRWW 11");
+
+        String Inter_Reward_Ad_ID;
+
+        if (Butter.getIIRRDD1(mContext) == 0) {
+
+            Inter_Reward_Ad_ID = Butter.getIRD11(mContext);
+
+            Butter.setIIRRDD1(mContext, 1);
+
+
+        } else {
+
+            Inter_Reward_Ad_ID = Butter.getIRD111(mContext);
+
+            Butter.setIIRRDD1(mContext, 0);
+
+
+        }
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedInterstitialAd.load(mContext, Inter_Reward_Ad_ID,
+                adRequest, new RewardedInterstitialAdLoadCallback() {
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedInterstitialAd rewardedInterstitialAd) {
+                        super.onAdLoaded(rewardedInterstitialAd);
+
+                        mrewardedInterstitialAd = rewardedInterstitialAd;
+
+                        mrewardedInterstitialAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                                onRewardgetListner.OnReward(true);
+                            }
+                        });
+
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                progressDialog.dismiss();
+
+                            }
+
+                        }, 500);
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
+                        mrewardedInterstitialAd = null;
+
+                        Reward_Inter_Show_with_Dialog_Setup111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+
+                    }
+
+
+                });
+
+
+    }
+
+    public void Reward_Inter_Show_with_Dialog_Setup111(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        Log.e("IRWW 111", "IRWW 111");
+
+        String Inter_Reward_Ad_ID;
+
+        if (Butter.getIIRRDD1(mContext) == 0) {
+
+            Inter_Reward_Ad_ID = Butter.getIRD11(mContext);
+
+            Butter.setIIRRDD1(mContext, 1);
+
+
+        } else {
+
+            Inter_Reward_Ad_ID = Butter.getIRD111(mContext);
+
+            Butter.setIIRRDD1(mContext, 0);
+
+
+        }
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedInterstitialAd.load(mContext, Inter_Reward_Ad_ID,
+                adRequest, new RewardedInterstitialAdLoadCallback() {
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedInterstitialAd rewardedInterstitialAd) {
+                        super.onAdLoaded(rewardedInterstitialAd);
+
+                        mrewardedInterstitialAd = rewardedInterstitialAd;
+
+                        mrewardedInterstitialAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                                onRewardgetListner.OnReward(true);
+                            }
+                        });
+
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                progressDialog.dismiss();
+
+                            }
+
+                        }, 500);
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
+                        mrewardedInterstitialAd = null;
+
+                        Reward_Inter_Show_with_Dialog_Setup1111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+
+                    }
+
+
+                });
+
+
+    }
+
+    public void Reward_Inter_Show_with_Dialog_Setup1111(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        Log.e("IRWW 1111", "IRWW 1111");
+
+        String Inter_Reward_Ad_ID;
+
+        if (Butter.getIIRRDD1(mContext) == 0) {
+
+            Inter_Reward_Ad_ID = Butter.getIRD11(mContext);
+
+            Butter.setIIRRDD1(mContext, 1);
+
+
+        } else {
+
+            Inter_Reward_Ad_ID = Butter.getIRD111(mContext);
+
+            Butter.setIIRRDD1(mContext, 0);
+
+
+        }
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedInterstitialAd.load(mContext, Inter_Reward_Ad_ID,
+                adRequest, new RewardedInterstitialAdLoadCallback() {
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedInterstitialAd rewardedInterstitialAd) {
+                        super.onAdLoaded(rewardedInterstitialAd);
+
+                        mrewardedInterstitialAd = rewardedInterstitialAd;
+
+                        mrewardedInterstitialAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                                onRewardgetListner.OnReward(true);
+                            }
+                        });
+
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                progressDialog.dismiss();
+
+                            }
+
+                        }, 500);
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
+                        mrewardedInterstitialAd = null;
+
+                        Reward_Inter_Show_with_Dialog_Setup11111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+
+                    }
+
+
+                });
+
+
+    }
+
+    public void Reward_Inter_Show_with_Dialog_Setup11111(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        Log.e("IRWW 11111", "IRWW 11111");
+
+        String Inter_Reward_Ad_ID;
+
+        if (Butter.getIIRRDD1(mContext) == 0) {
+
+            Inter_Reward_Ad_ID = Butter.getIRD11(mContext);
+
+            Butter.setIIRRDD1(mContext, 1);
+
+
+        } else {
+
+            Inter_Reward_Ad_ID = Butter.getIRD111(mContext);
+
+            Butter.setIIRRDD1(mContext, 0);
+
+
+        }
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedInterstitialAd.load(mContext, Inter_Reward_Ad_ID,
+                adRequest, new RewardedInterstitialAdLoadCallback() {
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedInterstitialAd rewardedInterstitialAd) {
+                        super.onAdLoaded(rewardedInterstitialAd);
+
+                        mrewardedInterstitialAd = rewardedInterstitialAd;
+
+                        mrewardedInterstitialAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                                onRewardgetListner.OnReward(true);
+                            }
+                        });
+
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                progressDialog.dismiss();
+
+                            }
+
+                        }, 500);
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
                         mrewardedInterstitialAd = null;
 
                         Reward_Inter_Show_with_Dialog_Setup2(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
@@ -6298,6 +11515,7 @@ public class Pizza {
 
     public void Reward_Inter_Show_with_Dialog_Setup2(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
 
+        Log.e("IRWW 2", "IRWW 2");
 
         String Inter_Reward_Ad_ID;
 
@@ -6349,7 +11567,74 @@ public class Pizza {
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error.
+
+                        mrewardedInterstitialAd = null;
+
+
+                        Reward_Inter_Show_with_Dialog_Setup22(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                    }
+
+
+                });
+
+
+    }
+
+    public void Reward_Inter_Show_with_Dialog_Setup22(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        Log.e("IRWW 22", "IRWW 22");
+
+        String Inter_Reward_Ad_ID;
+
+        if (Butter.getIIRRDD2(mContext) == 0) {
+
+            Inter_Reward_Ad_ID = Butter.getIRD22(mContext);
+
+            Butter.setIIRRDD2(mContext, 1);
+
+
+        } else {
+
+            Inter_Reward_Ad_ID = Butter.getIRD222(mContext);
+
+            Butter.setIIRRDD2(mContext, 0);
+
+
+        }
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedInterstitialAd.load(mContext, Inter_Reward_Ad_ID,
+                adRequest, new RewardedInterstitialAdLoadCallback() {
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedInterstitialAd rewardedInterstitialAd) {
+                        super.onAdLoaded(rewardedInterstitialAd);
+
+                        mrewardedInterstitialAd = rewardedInterstitialAd;
+
+                        mrewardedInterstitialAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                                onRewardgetListner.OnReward(true);
+                            }
+                        });
+
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                progressDialog.dismiss();
+
+                            }
+
+                        }, 500);
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
                         mrewardedInterstitialAd = null;
 
 
@@ -6364,6 +11649,7 @@ public class Pizza {
 
     public void Reward_Inter_Show_with_Dialog_Setup3(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
 
+        Log.e("IRWW 3", "IRWW 3");
 
         String Inter_Reward_Ad_ID;
 
@@ -6415,9 +11701,11 @@ public class Pizza {
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
                         mrewardedInterstitialAd = null;
 
 
+                        Log.e("TAG", "onAdFailedToLoad: " + loadAdError.getMessage());
                         onRewardgetListner.OnReward(false);
                         progressDialog.dismiss();
                     }
@@ -6428,6 +11716,7 @@ public class Pizza {
 
     }
 
+
     public void Reward(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type) {
 
         if (Exit_Menu_Decided == 100) {
@@ -6435,11 +11724,18 @@ public class Pizza {
             return;
         }
 
-        if ((Butter.getSetup(mContext)).equals("1")) {
+        if ((Butter.getSetup(mContext)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
 
             CustomProgressDialogue progressDialog = new CustomProgressDialogue(mContext, Popupmenu_Type, title, description);
-
-            progressDialog.show();
 
             new FancyGifDialog.Builder(mContext)
                     .setTitle(title)
@@ -6513,10 +11809,11 @@ public class Pizza {
                                 adRequest, new RewardedAdLoadCallback() {
                                     @Override
                                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                                        // Handle the error.
+
                                         mRewardedAd = null;
 
 
+                                        Log.e("TAG", "onAdFailedToLoad: " + loadAdError.getMessage());
                                         onRewardgetListner.OnReward(false);
                                         progressDialog.dismiss();
                                     }
@@ -6629,7 +11926,316 @@ public class Pizza {
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error.
+
+                        mRewardedAd = null;
+
+                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                            Reward_Setup22(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("2")) {
+                            Reward_Setup11111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("3")) {
+                            Reward_Setup1111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("4")) {
+                            Reward_Setup111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("5")) {
+                            Reward_Setup11(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("6")) {
+                            Reward_Setup2(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("7")) {
+                            Reward_Setup11111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("8")) {
+                            Reward_Setup1111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                        }
+
+                    }
+
+                });
+
+
+    }
+
+    public void Reward_Setup11(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        String Reward_Ad_ID;
+
+        if (Butter.getRRDD1(mContext) == 0) {
+
+            Reward_Ad_ID = Butter.getRD11(mContext);
+
+            Butter.setRRDD1(mContext, 1);
+
+
+        } else {
+
+            Reward_Ad_ID = Butter.getRD111(mContext);
+
+            Butter.setRRDD1(mContext, 0);
+
+
+        }
+
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedAd.load(mContext, Reward_Ad_ID,
+                adRequest, new RewardedAdLoadCallback() {
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+                        mRewardedAd = rewardedAd;
+
+
+                        mRewardedAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+
+                                onRewardgetListner.OnReward(true);
+
+
+                            }
+                        });
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                progressDialog.dismiss();
+
+                            }
+
+                        }, 500);
+
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
+                        mRewardedAd = null;
+                        Reward_Setup111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                    }
+
+                });
+
+
+    }
+
+    public void Reward_Setup111(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        String Reward_Ad_ID;
+
+        if (Butter.getRRDD1(mContext) == 0) {
+
+            Reward_Ad_ID = Butter.getRD11(mContext);
+
+            Butter.setRRDD1(mContext, 1);
+
+
+        } else {
+
+            Reward_Ad_ID = Butter.getRD111(mContext);
+
+            Butter.setRRDD1(mContext, 0);
+
+
+        }
+
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedAd.load(mContext, Reward_Ad_ID,
+                adRequest, new RewardedAdLoadCallback() {
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+                        mRewardedAd = rewardedAd;
+
+
+                        mRewardedAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+
+                                onRewardgetListner.OnReward(true);
+
+
+                            }
+                        });
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                progressDialog.dismiss();
+
+                            }
+
+                        }, 500);
+
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
+                        mRewardedAd = null;
+                        Reward_Setup1111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                    }
+
+                });
+
+
+    }
+
+    public void Reward_Setup1111(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        String Reward_Ad_ID;
+
+        if (Butter.getRRDD1(mContext) == 0) {
+
+            Reward_Ad_ID = Butter.getRD11(mContext);
+
+            Butter.setRRDD1(mContext, 1);
+
+
+        } else {
+
+            Reward_Ad_ID = Butter.getRD111(mContext);
+
+            Butter.setRRDD1(mContext, 0);
+
+
+        }
+
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedAd.load(mContext, Reward_Ad_ID,
+                adRequest, new RewardedAdLoadCallback() {
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+                        mRewardedAd = rewardedAd;
+
+
+                        mRewardedAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+
+                                onRewardgetListner.OnReward(true);
+
+
+                            }
+                        });
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                progressDialog.dismiss();
+
+                            }
+
+                        }, 500);
+
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
+                        mRewardedAd = null;
+                        Reward_Setup11111(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                    }
+
+                });
+
+
+    }
+
+    public void Reward_Setup11111(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        String Reward_Ad_ID;
+
+        if (Butter.getRRDD1(mContext) == 0) {
+
+            Reward_Ad_ID = Butter.getRD11(mContext);
+
+            Butter.setRRDD1(mContext, 1);
+
+
+        } else {
+
+            Reward_Ad_ID = Butter.getRD111(mContext);
+
+            Butter.setRRDD1(mContext, 0);
+
+
+        }
+
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedAd.load(mContext, Reward_Ad_ID,
+                adRequest, new RewardedAdLoadCallback() {
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+                        mRewardedAd = rewardedAd;
+
+
+                        mRewardedAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+
+                                onRewardgetListner.OnReward(true);
+
+
+                            }
+                        });
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                progressDialog.dismiss();
+
+                            }
+
+                        }, 500);
+
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
                         mRewardedAd = null;
                         Reward_Setup2(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
                     }
@@ -6700,6 +12306,78 @@ public class Pizza {
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
+                        mRewardedAd = null;
+                        Reward_Setup22(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
+                    }
+
+                });
+
+
+    }
+
+    public void Reward_Setup22(Activity mContext, OnRewardgetListner onRewardgetListner, String title, String description, int Popupmenu_Type, CustomProgressDialogue progressDialog) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        String Reward_Ad_ID;
+
+        if (Butter.getRRDD2(mContext) == 0) {
+
+            Reward_Ad_ID = Butter.getRD22(mContext);
+
+            Butter.setRRDD2(mContext, 1);
+
+
+        } else {
+
+            Reward_Ad_ID = Butter.getRD222(mContext);
+
+            Butter.setRRDD2(mContext, 0);
+
+
+        }
+
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedAd.load(mContext, Reward_Ad_ID,
+                adRequest, new RewardedAdLoadCallback() {
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+                        mRewardedAd = rewardedAd;
+
+
+                        mRewardedAd.show(mContext, new OnUserEarnedRewardListener() {
+                            @Override
+                            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+
+                                onRewardgetListner.OnReward(true);
+
+
+                            }
+                        });
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                progressDialog.dismiss();
+
+                            }
+
+                        }, 500);
+
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+
                         mRewardedAd = null;
                         Reward_Setup3(mContext, onRewardgetListner, title, description, Popupmenu_Type, progressDialog);
                     }
@@ -6770,7 +12448,7 @@ public class Pizza {
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error.
+
                         mRewardedAd = null;
                         onRewardgetListner.OnReward(false);
                         progressDialog.dismiss();
@@ -6901,19 +12579,19 @@ public class Pizza {
 
                 @Override
                 public void onInterstitialClicked(TappxInterstitial arg0) {
-                    // TODO Auto-generated method stub
+
 
                 }
 
                 @Override
                 public void onInterstitialDismissed(TappxInterstitial arg0) {
-                    // TODO Auto-generated method stub
+
 
                 }
 
                 @Override
                 public void onInterstitialShown(TappxInterstitial arg0) {
-                    // TODO Auto-generated method stub
+
 
                 }
 
@@ -6963,7 +12641,7 @@ public class Pizza {
 
         String Description = "Do You Want To Exit ?";
 
-        final Dialog dialog = new Dialog(context);
+        final Dialog dialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (dialog.getWindow() != null)
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -6972,6 +12650,8 @@ public class Pizza {
 
         TextView text = (TextView) dialog.findViewById(R.id.title);
         text.setText(Description);
+
+        gifImageView = (GifImageView) dialog.findViewById(R.id.gifImageView);
 
         RelativeLayout Exit_Ads = (RelativeLayout) dialog.findViewById(R.id.banner);
         Banner_Back_Setup1(Exit_Ads, Banner_Type);
@@ -7068,6 +12748,7 @@ public class Pizza {
 
                         if ((Butter.getSetup(Contextt)).equals("1")) {
 
+                            Log.e("Banner Setup 1", "Banner Setup 1");
 
                             if (Butter.getBB1(Contextt) == 0) {
 
@@ -7084,6 +12765,7 @@ public class Pizza {
                             }
                         } else if ((Butter.getSetup(Contextt)).equals("0")) {
 
+                            Log.e("Banner N 1", "Banner N 1");
 
                             if (Butter.getbanner(Contextt) == 0) {
 
@@ -7112,9 +12794,10 @@ public class Pizza {
 
                             @Override
                             public void onAdLoaded() {
-                                // TODO Auto-generated method stub
+
 
                                 Ad_Layout.setVisibility(View.VISIBLE);
+                                gifImageView.setVisibility(View.GONE);
                                 Butter.setsplashcount(Contextt, 0);
 
                                 super.onAdLoaded();
@@ -7123,7 +12806,7 @@ public class Pizza {
 
                             @Override
                             public void onAdFailedToLoad(int errorCode) {
-                                // TODO Auto-generated method stub
+
                                 super.onAdFailedToLoad(errorCode);
 
                                 mAdView.destroy();
@@ -7180,6 +12863,7 @@ public class Pizza {
 
         if ((Butter.getSetup(Contextt)).equals("1")) {
 
+            Log.e("Banner Setup 2", "Banner Setup 2");
 
             if (Butter.getBB2(Contextt) == 0) {
 
@@ -7197,6 +12881,7 @@ public class Pizza {
 
         } else if ((Butter.getSetup(Contextt)).equals("0")) {
 
+            Log.e("Banner N 2", "Banner N 2");
 
             if (Butter.getbanner(Contextt) == 0) {
 
@@ -7225,9 +12910,11 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
 
                 Ad_Layout.setVisibility(View.VISIBLE);
+                gifImageView.setVisibility(View.GONE);
+
                 Butter.setsplashcount(Contextt, 0);
 
                 super.onAdLoaded();
@@ -7236,7 +12923,7 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
                 super.onAdFailedToLoad(errorCode);
 
                 mAdView.destroy();
@@ -7280,6 +12967,7 @@ public class Pizza {
 
         if ((Butter.getSetup(Contextt)).equals("1")) {
 
+            Log.e("Banner Setup 3", "Banner Setup 3");
 
             if (Butter.getBB3(Contextt) == 0) {
 
@@ -7297,6 +12985,7 @@ public class Pizza {
 
         } else if ((Butter.getSetup(Contextt)).equals("0")) {
 
+            Log.e("Banner N 3", "Banner N 3");
 
             if (Butter.getbanner(Contextt) == 0) {
 
@@ -7325,9 +13014,10 @@ public class Pizza {
 
             @Override
             public void onAdLoaded() {
-                // TODO Auto-generated method stub
+
 
                 Ad_Layout.setVisibility(View.VISIBLE);
+                gifImageView.setVisibility(View.GONE);
                 Butter.setsplashcount(Contextt, 0);
 
                 super.onAdLoaded();
@@ -7336,7 +13026,7 @@ public class Pizza {
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // TODO Auto-generated method stub
+
                 super.onAdFailedToLoad(errorCode);
 
                 mAdView.destroy();
@@ -7377,6 +13067,7 @@ public class Pizza {
                     public void onBannerLoaded(
                             TappxBanner tappxBanner) {
                         Ad_Layout.setVisibility(View.VISIBLE);
+                        gifImageView.setVisibility(View.GONE);
 
                         Butter.setsplashcount(
                                 Contextt,
@@ -7461,15 +13152,18 @@ public class Pizza {
 
         String Description = "Do You Want To Exit ?";
 
-        final Dialog dialog = new Dialog(context);
+        final Dialog dialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (dialog.getWindow() != null)
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         dialog.setCancelable(true);
         dialog.setContentView(R.layout.exitt);
 
         TextView text = (TextView) dialog.findViewById(R.id.title);
         text.setText(Description);
+
+        gifImageView = (GifImageView) dialog.findViewById(R.id.gifImageView);
 
         RelativeLayout Exit_Ads = (RelativeLayout) dialog.findViewById(R.id.banner);
         Native_Back(context, Exit_Ads, Native_Type, 0, 0, 0);
@@ -7541,7 +13235,7 @@ public class Pizza {
                     if (Server_Yes_No == 1 || Server_Yes_No == 0) {
 
 
-                        Native_Back_Setup1(nContext, Ad_Layout, Native_Type, Bottom_Ad_Margin, Top_Ad_Margin, Animation);
+                        Native_Show_Exit(Ad_Layout);
 
                     } else {
 
@@ -7561,6 +13255,934 @@ public class Pizza {
 
     }
 
+    public void Exit_Popup_With_Ads_Loading(final int Which_Native_Load) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if (isNetworkConnected(Contextt) == true) {
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (Server_Yes_No == 1 || Server_Yes_No == 0) {
+
+                        if ((Butter.getSetup(Contextt)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
+
+                            Native_Pre_Load_Setup1_Exit(Which_Native_Load);
+
+                        } else if ((Butter.getSetup(Contextt)).equals("0")) {
+
+                            Native_Pre_Load_Normal_Exit(Which_Native_Load);
+
+                        }
+
+
+                    } else {
+
+                        handler.postDelayed(this, 500);
+
+                    }
+
+                }
+
+            }, 500);
+
+        }
+    }
+
+    public void Native_Pre_Load_Normal_Exit(final int Which_Native_Load) {
+
+        Which_Native_Exit = Which_Native_Load;
+
+        if (Butter.getnative(Contextt) == 0) {
+
+            Native_ID_Exit = Butter.getnative1(Contextt);
+
+            Butter.setnative(Contextt, 1);
+
+
+        } else {
+
+            Native_ID_Exit = Butter.getnative2(Contextt);
+
+            Butter.setnative(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID_Exit)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView_Exit = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView_Exit.setStyles(styles);
+                        Pre_Load_Native_templateView_Exit.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView_Exit.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not_Exit = 1;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Pre_Banner_Load_Tappx_Normal_For_Native_Exit(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup1_Exit(final int Which_Native_Load) {
+
+        Which_Native_Exit = Which_Native_Load;
+
+        if (Butter.getNN1(Contextt) == 0) {
+
+            Native_ID_Exit = Butter.getN11(Contextt);
+
+            Butter.setNN1(Contextt, 1);
+
+
+        } else {
+
+            Native_ID_Exit = Butter.getN111(Contextt);
+
+            Butter.setNN1(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID_Exit)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView_Exit = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView_Exit.setStyles(styles);
+                        Pre_Load_Native_templateView_Exit.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView_Exit.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not_Exit = 1;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+
+                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                            Native_Pre_Load_Setup22_Exit(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("2")) {
+                            Native_Pre_Load_Setup11111_Exit(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("3")) {
+                            Native_Pre_Load_Setup1111_Exit(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("4")) {
+                            Native_Pre_Load_Setup111_Exit(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("5")) {
+                            Native_Pre_Load_Setup11_Exit(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("6")) {
+                            Native_Pre_Load_Setup2_Exit(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("7")) {
+                            Native_Pre_Load_Setup11111_Exit(Which_Native_Load);
+                        }
+                        if ((Butter.getSetup(Contextt)).equals("8")) {
+                            Native_Pre_Load_Setup1111_Exit(Which_Native_Load);
+                        }
+
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup11_Exit(final int Which_Native_Load) {
+
+        Which_Native_Exit = Which_Native_Load;
+
+        if (Butter.getNN1(Contextt) == 0) {
+
+            Native_ID_Exit = Butter.getN11(Contextt);
+
+            Butter.setNN1(Contextt, 1);
+
+
+        } else {
+
+            Native_ID_Exit = Butter.getN111(Contextt);
+
+            Butter.setNN1(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID_Exit)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView_Exit = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView_Exit.setStyles(styles);
+                        Pre_Load_Native_templateView_Exit.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView_Exit.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not_Exit = 11;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Native_Pre_Load_Setup111_Exit(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup111_Exit(final int Which_Native_Load) {
+
+        Which_Native_Exit = Which_Native_Load;
+
+        if (Butter.getNN1(Contextt) == 0) {
+
+            Native_ID_Exit = Butter.getN11(Contextt);
+
+            Butter.setNN1(Contextt, 1);
+
+
+        } else {
+
+            Native_ID_Exit = Butter.getN111(Contextt);
+
+            Butter.setNN1(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID_Exit)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView_Exit = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView_Exit.setStyles(styles);
+                        Pre_Load_Native_templateView_Exit.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView_Exit.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not_Exit = 111;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Native_Pre_Load_Setup1111_Exit(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup1111_Exit(final int Which_Native_Load) {
+
+        Which_Native_Exit = Which_Native_Load;
+
+        if (Butter.getNN1(Contextt) == 0) {
+
+            Native_ID_Exit = Butter.getN11(Contextt);
+
+            Butter.setNN1(Contextt, 1);
+
+
+        } else {
+
+            Native_ID_Exit = Butter.getN111(Contextt);
+
+            Butter.setNN1(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID_Exit)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView_Exit = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView_Exit.setStyles(styles);
+                        Pre_Load_Native_templateView_Exit.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView_Exit.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not_Exit = 1111;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Native_Pre_Load_Setup11111_Exit(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup11111_Exit(final int Which_Native_Load) {
+
+        Which_Native_Exit = Which_Native_Load;
+
+        if (Butter.getNN1(Contextt) == 0) {
+
+            Native_ID_Exit = Butter.getN11(Contextt);
+
+            Butter.setNN1(Contextt, 1);
+
+
+        } else {
+
+            Native_ID_Exit = Butter.getN111(Contextt);
+
+            Butter.setNN1(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID_Exit)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView_Exit = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView_Exit.setStyles(styles);
+                        Pre_Load_Native_templateView_Exit.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView_Exit.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not_Exit = 11111;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Native_Pre_Load_Setup2_Exit(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup2_Exit(final int Which_Native_Load) {
+
+        Which_Native_Exit = Which_Native_Load;
+
+        if (Butter.getNN2(Contextt) == 0) {
+
+            Native_ID_Exit = Butter.getN22(Contextt);
+
+            Butter.setNN2(Contextt, 1);
+
+
+        } else {
+
+            Native_ID_Exit = Butter.getN222(Contextt);
+
+            Butter.setNN2(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID_Exit)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView_Exit = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView_Exit.setStyles(styles);
+                        Pre_Load_Native_templateView_Exit.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView_Exit.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not_Exit = 2;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Native_Pre_Load_Setup22_Exit(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup22_Exit(final int Which_Native_Load) {
+
+        Which_Native_Exit = Which_Native_Load;
+
+        if (Butter.getNN2(Contextt) == 0) {
+
+            Native_ID_Exit = Butter.getN22(Contextt);
+
+            Butter.setNN2(Contextt, 1);
+
+
+        } else {
+
+            Native_ID_Exit = Butter.getN222(Contextt);
+
+            Butter.setNN2(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID_Exit)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView_Exit = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView_Exit.setStyles(styles);
+                        Pre_Load_Native_templateView_Exit.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView_Exit.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not_Exit = 2;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Native_Pre_Load_Setup3_Exit(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Native_Pre_Load_Setup3_Exit(final int Which_Native_Load) {
+
+        Which_Native_Exit = Which_Native_Load;
+
+        if (Butter.getNN3(Contextt) == 0) {
+
+            Native_ID_Exit = Butter.getN33(Contextt);
+
+            Butter.setNN3(Contextt, 1);
+
+
+        } else {
+
+            Native_ID_Exit = Butter.getN333(Contextt);
+
+            Butter.setNN3(Contextt, 0);
+
+
+        }
+
+        AdLoader adLoader = new AdLoader.Builder(Contextt, Native_ID_Exit)
+                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                    private ColorDrawable background;
+
+                    @Override
+                    public void onNativeAdLoaded(NativeAd nativeAd) {
+                        PizzaStyle styles = new
+                                PizzaStyle.Builder().withMainBackgroundColor(background).build();
+
+
+                        Pre_Load_Native_templateView_Exit = new TemplateView(Contextt, Which_Native_Load);
+
+                        Pre_Load_Native_templateView_Exit.setStyles(styles);
+                        Pre_Load_Native_templateView_Exit.setNativeAd(nativeAd);
+                        Pre_Load_Native_templateView_Exit.setVisibility(View.VISIBLE);
+
+                        Native_Load_Not_Exit = 3;
+
+
+                    }
+
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+
+                        Pre_Banner_Load_Tappx_Normal_For_Native_Exit(Which_Native_Load);
+
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+
+                        .build())
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
+    }
+
+    public void Pre_Banner_Load_Tappx_Normal_For_Native_Exit(int Which_Native_Load) {
+
+        Pre_Tappxbanner_Exit = new TappxBanner(Contextt, Butter.gettx(Contextt));
+
+
+        Pre_Tappxbanner_Exit
+                .setAdSize(TappxBanner.AdSize.BANNER_300x250);
+
+
+        Pre_Tappxbanner_Exit.loadAd();
+        Pre_Tappxbanner_Exit.setRefreshTimeSeconds(30);
+
+        Pre_Tappxbanner_Exit.setListener(new TappxBannerListener() {
+            @Override
+            public void onBannerLoaded(TappxBanner tappxBanner) {
+
+                Butter.setsplashcount(Contextt,
+                        (Butter.getsplashcount(Contextt) + 1));
+
+                Native_Load_Not_Exit = 0;
+
+            }
+
+            @Override
+            public void onBannerLoadFailed(TappxBanner tappxBanner,
+                                           TappxAdError tappxAdError) {
+
+
+            }
+
+            @Override
+            public void onBannerClicked(TappxBanner tappxBanner) {
+
+            }
+
+            @Override
+            public void onBannerExpanded(TappxBanner tappxBanner) {
+
+            }
+
+            @Override
+            public void onBannerCollapsed(TappxBanner tappxBanner) {
+
+            }
+        });
+
+    }
+
+    public void Native_Show_Normal_Exit(final RelativeLayout Ad_Layout) {
+
+        if (Native_Load_Not_Exit == 1) {
+
+            if (Pre_Load_Native_templateView_Exit != null) {
+
+                Log.e("NT", "NT");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView_Exit);
+                    Native_Pre_Load_Normal_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+
+        if (Native_Load_Not_Exit == 0) {
+
+            if (Pre_Tappxbanner_Exit != null) {
+
+                Log.e("TXXXX", "TXXXX");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Tappxbanner_Exit);
+                    Native_Pre_Load_Normal_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+
+    }
+
+    public void Native_Show_Setup_Exit(final RelativeLayout Ad_Layout) {
+
+        if (Native_Load_Not_Exit == 1) {
+
+            if (Pre_Load_Native_templateView_Exit != null) {
+
+                Log.e("NT 1", "NT 1");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView_Exit);
+                    Native_Pre_Load_Setup1_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+        if (Native_Load_Not_Exit == 11) {
+
+            if (Pre_Load_Native_templateView_Exit != null) {
+
+                Log.e("NT 11", "NT 11");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView_Exit);
+                    Native_Pre_Load_Setup1_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+        if (Native_Load_Not_Exit == 111) {
+
+            if (Pre_Load_Native_templateView_Exit != null) {
+
+                Log.e("NT 111", "NT 111");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView_Exit);
+                    Native_Pre_Load_Setup1_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+        if (Native_Load_Not_Exit == 1111) {
+
+            if (Pre_Load_Native_templateView_Exit != null) {
+
+                Log.e("NT 1111", "NT 1111");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView_Exit);
+                    Native_Pre_Load_Setup1_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+        if (Native_Load_Not_Exit == 11111) {
+
+            if (Pre_Load_Native_templateView_Exit != null) {
+
+                Log.e("NT 11111", "NT 11111");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView_Exit);
+                    Native_Pre_Load_Setup1_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+
+        if (Native_Load_Not_Exit == 2) {
+
+            if (Pre_Load_Native_templateView_Exit != null) {
+
+                Log.e("NT 2", "NT 2");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView_Exit);
+                    Native_Pre_Load_Setup1_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+
+        if (Native_Load_Not_Exit == 22) {
+
+            if (Pre_Load_Native_templateView_Exit != null) {
+
+                Log.e("NT 22", "NT 22");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView_Exit);
+                    Native_Pre_Load_Setup1_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+
+        if (Native_Load_Not_Exit == 3) {
+
+            if (Pre_Load_Native_templateView_Exit != null) {
+
+                Log.e("NT 3", "NT 3");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Load_Native_templateView_Exit);
+                    Native_Pre_Load_Setup1_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+
+        if (Native_Load_Not_Exit == 0) {
+
+            if (Pre_Tappxbanner_Exit != null) {
+
+                Log.e("TX 4", "TX 4");
+
+                try {
+
+                    Ad_Layout.removeAllViews();
+                    Ad_Layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+                    Ad_Layout.addView(Pre_Tappxbanner_Exit);
+                    Native_Pre_Load_Setup1_Exit(Which_Native_Exit);
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        }
+
+    }
+
+    public void Native_Show_Exit(final RelativeLayout Ad_Layout) {
+
+        if (Exit_Menu_Decided == 100) {
+
+            return;
+        }
+
+        if ((Butter.getSetup(Contextt)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
+
+            Native_Show_Setup_Exit(Ad_Layout);
+
+        } else if ((Butter.getSetup(Contextt)).equals("0")) {
+
+            Native_Show_Normal_Exit(Ad_Layout);
+
+        }
+
+
+    }
+
     public void Native_Back_Setup1(Context nContext, final RelativeLayout Ad_Layout, int Native_Type, int Bottom_Ad_Margin, int Top_Ad_Margin, int Animation) {
 
         if (Exit_Menu_Decided == 100) {
@@ -7568,8 +14190,18 @@ public class Pizza {
             return;
         }
 
-        if ((Butter.getSetup(Contextt)).equals("1")) {
+        if ((Butter.getSetup(Contextt)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
 
+            Log.e("Native Setup 1", "Native Setup 1");
 
             if (Butter.getNN1(nContext) == 0) {
 
@@ -7588,6 +14220,8 @@ public class Pizza {
             }
         } else if ((Butter.getSetup(Contextt)).equals("0")) {
 
+            Log.e("Native N 1", "Native N 1");
+
 
             if (Butter.getnative(nContext) == 0) {
 
@@ -7618,6 +14252,7 @@ public class Pizza {
 
                         TemplateView templateView = new TemplateView(nContext, Native_Type);
 
+
                         templateView.setStyles(styles);
                         templateView.setNativeAd(nativeAd);
 
@@ -7626,12 +14261,14 @@ public class Pizza {
 
                         templateView.setVisibility(View.VISIBLE);
 
+
                     }
 
                 })
                 .withAdListener(new AdListener() {
                     @Override
                     public void onAdFailedToLoad(LoadAdError adError) {
+
 
                         Ad_Layout.removeAllViews();
 
@@ -7642,6 +14279,7 @@ public class Pizza {
                     }
                 })
                 .withNativeAdOptions(new NativeAdOptions.Builder()
+
 
                         .build())
                 .build();
@@ -7656,8 +14294,18 @@ public class Pizza {
 
             return;
         }
-        if ((Butter.getSetup(Contextt)).equals("1")) {
+        if ((Butter.getSetup(Contextt)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
 
+            Log.e("Native Setup 2", "Native Setup 2");
 
             if (Butter.getNN2(nContext) == 0) {
 
@@ -7676,6 +14324,7 @@ public class Pizza {
             }
         } else if ((Butter.getSetup(Contextt)).equals("0")) {
 
+            Log.e("Native N 2", "Native N 2");
 
             if (Butter.getnative(nContext) == 0) {
 
@@ -7706,6 +14355,7 @@ public class Pizza {
 
                         TemplateView templateView = new TemplateView(nContext, Native_Type);
 
+
                         templateView.setStyles(styles);
                         templateView.setNativeAd(nativeAd);
 
@@ -7714,12 +14364,14 @@ public class Pizza {
 
                         templateView.setVisibility(View.VISIBLE);
 
+
                     }
 
                 })
                 .withAdListener(new AdListener() {
                     @Override
                     public void onAdFailedToLoad(LoadAdError adError) {
+
 
                         Ad_Layout.removeAllViews();
 
@@ -7730,6 +14382,7 @@ public class Pizza {
                     }
                 })
                 .withNativeAdOptions(new NativeAdOptions.Builder()
+
 
                         .build())
                 .build();
@@ -7744,8 +14397,18 @@ public class Pizza {
 
             return;
         }
-        if ((Butter.getSetup(Contextt)).equals("1")) {
+        if ((Butter.getSetup(Contextt)).equals("1") ||
+                (Butter.getSetup(Contextt)).equals("2") ||
+                (Butter.getSetup(Contextt)).equals("3") ||
+                (Butter.getSetup(Contextt)).equals("4") ||
+                (Butter.getSetup(Contextt)).equals("5") ||
+                (Butter.getSetup(Contextt)).equals("6") ||
+                (Butter.getSetup(Contextt)).equals("7") ||
+                (Butter.getSetup(Contextt)).equals("8") ||
+                (Butter.getSetup(Contextt)).equals("9") ||
+                (Butter.getSetup(Contextt)).equals("10")) {
 
+            Log.e("Native Setup 3", "Native Setup 3");
 
             if (Butter.getNN3(nContext) == 0) {
 
@@ -7764,6 +14427,7 @@ public class Pizza {
             }
         } else if ((Butter.getSetup(Contextt)).equals("0")) {
 
+            Log.e("Native N 3", "Native N 3");
 
             if (Butter.getnative(nContext) == 0) {
 
@@ -7794,6 +14458,7 @@ public class Pizza {
 
                         TemplateView templateView = new TemplateView(nContext, Native_Type);
 
+
                         templateView.setStyles(styles);
                         templateView.setNativeAd(nativeAd);
 
@@ -7802,12 +14467,14 @@ public class Pizza {
 
                         templateView.setVisibility(View.VISIBLE);
 
+
                     }
 
                 })
                 .withAdListener(new AdListener() {
                     @Override
                     public void onAdFailedToLoad(LoadAdError adError) {
+
 
                         Ad_Layout.removeAllViews();
 
@@ -7819,6 +14486,7 @@ public class Pizza {
                 })
                 .withNativeAdOptions(new NativeAdOptions.Builder()
 
+
                         .build())
                 .build();
 
@@ -7827,10 +14495,11 @@ public class Pizza {
     }
 
     private void Ad_Popup(Context mContext, String Title_Text_Of_Popup) {
-        // TODO Auto-generated method stub
+
 
         Ad_ProgressDialog = ProgressDialog.show(mContext, "", ""
                 + Title_Text_Of_Popup, true);
+
         Ad_ProgressDialog.getWindow().setBackgroundDrawable(
                 new ColorDrawable(Color.TRANSPARENT));
         Ad_ProgressDialog.setCancelable(true);
@@ -7839,7 +14508,7 @@ public class Pizza {
     }
 
     public void Rate_App_Randomly(Context mContext) {
-        // TODO Auto-generated method stub
+
 
         if ((new Random().nextInt((20 - 1) + 1) + 1) == 10) {
             Rate_App(mContext);
@@ -7848,15 +14517,15 @@ public class Pizza {
     }
 
     public void Rate_App(final Context mContext) {
-        // TODO Auto-generated method stub
+
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 mContext);
 
-        // set the title
+
         alertDialogBuilder.setTitle("" + mContext.getString(R.string.app_name));
 
-        // set dialog message
+
         alertDialogBuilder
                 .setMessage("Please Rate Our Application")
                 .setCancelable(true)
@@ -7864,7 +14533,7 @@ public class Pizza {
                         new DialogInterface.OnClickListener() {
                             @SuppressLint("InlinedApi")
                             public void onClick(DialogInterface dialog, int id) {
-                                // what to do if YES is tapped
+
                                 Uri uri = Uri.parse("market://details?id="
                                         + mContext.getPackageName());
                                 Intent goToMarket = new Intent(
@@ -7888,7 +14557,7 @@ public class Pizza {
                         new DialogInterface.OnClickListener() {
                             @SuppressLint("InlinedApi")
                             public void onClick(DialogInterface dialog, int id) {
-                                // code to do on Remind Me Later tapped
+
                                 dialog.cancel();
 
                             }
@@ -7896,7 +14565,7 @@ public class Pizza {
 
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // code to do on NO tapped
+
                         dialog.cancel();
                     }
                 });
@@ -7912,7 +14581,7 @@ public class Pizza {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // Showing progress dialog
+
 
         }
 
@@ -7920,19 +14589,23 @@ public class Pizza {
         protected Void doInBackground(Void... arg0) {
             HttpHandler sh = new HttpHandler();
 
+
+            Log.e("Enter ", "Enter ");
+
             String jsonStr = sh.makeServiceCall("" + Server);
 
             if (jsonStr != null) {
                 try {
                     JSONObject jsonObj = new JSONObject(jsonStr);
 
-                    // Getting JSON Array node
+
                     JSONArray contacts = jsonObj.getJSONArray("" + Packages);
 
-                    // looping through All Contacts
+
                     for (int i = 0; i < contacts.length(); i++) {
                         JSONObject c = contacts.getJSONObject(i);
 
+                        Log.e("Enter 1", "Enter 1");
 
                         String id = c.getString("exit_popup");
                         String tx = c.getString("tx");
@@ -7987,7 +14660,11 @@ public class Pizza {
                         String ird33 = c.getString("ird33");
                         String ird333 = c.getString("ird333");
 
+                        Log.e("1", "1");
+
+
                         HashMap<String, String> contact = new HashMap<String, String>();
+
 
                         contact.put("exit_popup", id);
                         contact.put("tx", tx);
@@ -8045,6 +14722,8 @@ public class Pizza {
 
                         contactList.add(contact);
 
+                        Log.e("2", "2");
+
 
                     }
                 } catch (final JSONException e) {
@@ -8060,13 +14739,15 @@ public class Pizza {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            // Dismiss the progress dialog
+
 
             if (contactList.size() > 0) {
 
                 Exit_Menu_Decided = Integer.parseInt(contactList.get(0).get("exit_popup"));
 
+
                 Butter.setincreseeee(Contextt, Exit_Menu_Decided);
+
 
                 TX = "" + contactList.get(0).get("tx");
                 BR1 = "" + contactList.get(0).get("b1");
@@ -8172,6 +14853,8 @@ public class Pizza {
                 Butter.setIRD33(Contextt, "" + IRD33);
                 Butter.setIRD333(Contextt, "" + IRD333);
 
+                Log.e("JSON LOAD", "JSON LOAD");
+
 
                 Server_Yes_No = 1;
 
@@ -8189,15 +14872,32 @@ public class Pizza {
 
                     }
 
+                    if (Exit_Menu_Decided == 2 || Exit_Menu_Decided == 4) {
+
+                        Exit_Popup_With_Ads_Loading(2);
+
+                    }
+
                     if ((Butter.getextra1(Contextt)).equals("1")) {
 
-                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                        if ((Butter.getSetup(Contextt)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
 
+                            Log.e("Setup Load", "Setup Load");
 
                             Load_Inter_Setup1(Contextt);
 
                         } else if ((Butter.getSetup(Contextt)).equals("0")) {
 
+                            Log.e("Setup Inter", "Setup Inter");
 
                             Pre_Interstial_Load_Normal(Contextt);
 
@@ -8206,13 +14906,24 @@ public class Pizza {
 
                     } else if ((Butter.getextra1(Contextt)).equals("2")) {
 
-                        if ((Butter.getSetup(Contextt)).equals("1")) {
+                        if ((Butter.getSetup(Contextt)).equals("1") ||
+                                (Butter.getSetup(Contextt)).equals("2") ||
+                                (Butter.getSetup(Contextt)).equals("3") ||
+                                (Butter.getSetup(Contextt)).equals("4") ||
+                                (Butter.getSetup(Contextt)).equals("5") ||
+                                (Butter.getSetup(Contextt)).equals("6") ||
+                                (Butter.getSetup(Contextt)).equals("7") ||
+                                (Butter.getSetup(Contextt)).equals("8") ||
+                                (Butter.getSetup(Contextt)).equals("9") ||
+                                (Butter.getSetup(Contextt)).equals("10")) {
 
+                            Log.e("Setup AO", "Setup AO");
                             Pre_App_Open_Load_Setup3(Contextt);
 
 
                         } else if ((Butter.getSetup(Contextt)).equals("0")) {
 
+                            Log.e("Normal AO", "Normal AO");
 
                             Pre_App_Open_Load_Normal(Contextt);
 
@@ -8247,6 +14958,7 @@ public class Pizza {
 
             if (contactList.size() == 0) {
 
+                Log.e("Failed", "Failed");
 
                 Butter.settx(Contextt, "" + Tx_ID);
                 Butter.setbanner1(Contextt, "" + Banner1);
@@ -8312,9 +15024,19 @@ public class Pizza {
 
                 Server_Yes_No = 0;
 
+
                 if ((Butter.getextra1(Contextt)).equals("1")) {
 
-                    if ((Butter.getSetup(Contextt)).equals("1")) {
+                    if ((Butter.getSetup(Contextt)).equals("1") ||
+                            (Butter.getSetup(Contextt)).equals("2") ||
+                            (Butter.getSetup(Contextt)).equals("3") ||
+                            (Butter.getSetup(Contextt)).equals("4") ||
+                            (Butter.getSetup(Contextt)).equals("5") ||
+                            (Butter.getSetup(Contextt)).equals("6") ||
+                            (Butter.getSetup(Contextt)).equals("7") ||
+                            (Butter.getSetup(Contextt)).equals("8") ||
+                            (Butter.getSetup(Contextt)).equals("9") ||
+                            (Butter.getSetup(Contextt)).equals("10")) {
 
                         Load_Inter_Setup1(Contextt);
 
@@ -8326,7 +15048,16 @@ public class Pizza {
 
                 } else if ((Butter.getextra1(Contextt)).equals("2")) {
 
-                    if ((Butter.getSetup(Contextt)).equals("1")) {
+                    if ((Butter.getSetup(Contextt)).equals("1") ||
+                            (Butter.getSetup(Contextt)).equals("2") ||
+                            (Butter.getSetup(Contextt)).equals("3") ||
+                            (Butter.getSetup(Contextt)).equals("4") ||
+                            (Butter.getSetup(Contextt)).equals("5") ||
+                            (Butter.getSetup(Contextt)).equals("6") ||
+                            (Butter.getSetup(Contextt)).equals("7") ||
+                            (Butter.getSetup(Contextt)).equals("8") ||
+                            (Butter.getSetup(Contextt)).equals("9") ||
+                            (Butter.getSetup(Contextt)).equals("10")) {
 
                         Pre_App_Open_Load_Setup3(Contextt);
 
@@ -8339,7 +15070,16 @@ public class Pizza {
 
                 } else if ((Butter.getextra1(Contextt)).equals("3")) {
 
-                    if ((Butter.getSetup(Contextt)).equals("1")) {
+                    if ((Butter.getSetup(Contextt)).equals("1") ||
+                            (Butter.getSetup(Contextt)).equals("2") ||
+                            (Butter.getSetup(Contextt)).equals("3") ||
+                            (Butter.getSetup(Contextt)).equals("4") ||
+                            (Butter.getSetup(Contextt)).equals("5") ||
+                            (Butter.getSetup(Contextt)).equals("6") ||
+                            (Butter.getSetup(Contextt)).equals("7") ||
+                            (Butter.getSetup(Contextt)).equals("8") ||
+                            (Butter.getSetup(Contextt)).equals("9") ||
+                            (Butter.getSetup(Contextt)).equals("10")) {
 
                         Load_Inter_Setup1(Contextt);
 
@@ -8356,7 +15096,16 @@ public class Pizza {
 
                 } else {
 
-                    if ((Butter.getSetup(Contextt)).equals("1")) {
+                    if ((Butter.getSetup(Contextt)).equals("1") ||
+                            (Butter.getSetup(Contextt)).equals("2") ||
+                            (Butter.getSetup(Contextt)).equals("3") ||
+                            (Butter.getSetup(Contextt)).equals("4") ||
+                            (Butter.getSetup(Contextt)).equals("5") ||
+                            (Butter.getSetup(Contextt)).equals("6") ||
+                            (Butter.getSetup(Contextt)).equals("7") ||
+                            (Butter.getSetup(Contextt)).equals("8") ||
+                            (Butter.getSetup(Contextt)).equals("9") ||
+                            (Butter.getSetup(Contextt)).equals("10")) {
 
                         Load_Inter_Setup1(Contextt);
 
@@ -8505,11 +15254,7 @@ public class Pizza {
         }
         if (InterstialAd1 != null) {
         }
-        if (InterstialAd_Setup3 != null) {
-        }
-        if (InterstialAd_Setup2 != null) {
-        }
-        if (InterstialAd_Setup1 != null) {
+        if (InterstialAd_Setup != null) {
         }
         if (mAdView != null) {
             mAdView.destroy();

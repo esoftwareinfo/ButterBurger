@@ -203,8 +203,6 @@ public class Butter {
                 .getString(EXTRA2, "");
     }
 
-    /*Application Ads ID*/
-
     private static final String SPLASHCOUNT = "splashcount";
 
     public static void setsplashcount(Context Context, int Int) {
@@ -613,6 +611,43 @@ public class Butter {
     public static int getAOAO3(Context Context) {
         return Context.getSharedPreferences(Context.getPackageName(), 0)
                 .getInt(AOAO3, 0);
+    }
+
+    private static final String AOAO1_AO = "AOAO1_AO";
+
+    public static void setAOAO1_AO(Context Context, int Int) {
+        Context.getSharedPreferences(Context.getPackageName(), 0).edit()
+                .putInt(AOAO1_AO, Int).commit();
+    }
+
+    public static int getAOAO1_AO(Context Context) {
+        return Context.getSharedPreferences(Context.getPackageName(), 0)
+                .getInt(AOAO1_AO, 0);
+    }
+
+    private static final String AOAO2_AO = "AOAO2_AO";
+
+    public static void setAOAO2_AO(Context Context, int Int) {
+        Context.getSharedPreferences(Context.getPackageName(), 0).edit()
+                .putInt(AOAO2_AO, Int).commit();
+    }
+
+    public static int getAOAO2_AO(Context Context) {
+        return Context.getSharedPreferences(Context.getPackageName(), 0)
+                .getInt(AOAO2_AO, 0);
+    }
+
+
+    private static final String AOAO3_AO = "AOAO3_AO";
+
+    public static void setAOAO3_AO(Context Context, int Int) {
+        Context.getSharedPreferences(Context.getPackageName(), 0).edit()
+                .putInt(AOAO3_AO, Int).commit();
+    }
+
+    public static int getAOAO3_AO(Context Context) {
+        return Context.getSharedPreferences(Context.getPackageName(), 0)
+                .getInt(AOAO3_AO, 0);
     }
 
     private static final String AO11 = "AO11";

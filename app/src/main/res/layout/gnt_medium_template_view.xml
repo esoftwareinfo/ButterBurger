@@ -60,14 +60,14 @@
                         android:layout_marginEnd="0dp"
                         android:layout_marginBottom="0dp"
                         android:layout_weight="0"
+                        android:contentDescription="TODO"
                         android:padding="3dp"
                         android:scaleType="fitCenter"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintDimensionRatio="H,1:1"
                         app:layout_constraintEnd_toStartOf="@id/content"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:contentDescription="TODO" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/content"

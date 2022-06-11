@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +21,6 @@ import com.google.android.gms.ads.appopen.AppOpenAd;
 
 
 public class AppOpenManager implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
-    private static final String LOG_TAG = "AppOpenManager";
     private AppOpenAd appOpenAd = null;
     private Activity currentActivity;
     private static boolean isShowingAd = false;
@@ -52,11 +50,31 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
                     new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
-
                             AppOpenManager.this.appOpenAd = null;
                             isShowingAd = false;
-                            Check = 1;
-                            fetchAd();
+
+                            if ((Butter.getSetup(myApplication)).equals("1") ||
+                                    (Butter.getSetup(myApplication)).equals("2") ||
+                                    (Butter.getSetup(myApplication)).equals("3") ||
+                                    (Butter.getSetup(myApplication)).equals("4") ||
+                                    (Butter.getSetup(myApplication)).equals("5") ||
+                                    (Butter.getSetup(myApplication)).equals("6") ||
+                                    (Butter.getSetup(myApplication)).equals("7") ||
+                                    (Butter.getSetup(myApplication)).equals("8") ||
+                                    (Butter.getSetup(myApplication)).equals("9") ||
+                                    (Butter.getSetup(myApplication)).equals("10")) {
+
+                                Check = 1;
+                                fetchAd();
+
+                            } else if ((Butter.getSetup(myApplication)).equals("0")) {
+
+                                Check = 0;
+                                fetchAd();
+
+                            }
+
+
                         }
 
                         @Override
@@ -73,7 +91,27 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
         } else {
 
-            fetchAd();
+            if ((Butter.getSetup(myApplication)).equals("1") ||
+                    (Butter.getSetup(myApplication)).equals("2") ||
+                    (Butter.getSetup(myApplication)).equals("3") ||
+                    (Butter.getSetup(myApplication)).equals("4") ||
+                    (Butter.getSetup(myApplication)).equals("5") ||
+                    (Butter.getSetup(myApplication)).equals("6") ||
+                    (Butter.getSetup(myApplication)).equals("7") ||
+                    (Butter.getSetup(myApplication)).equals("8") ||
+                    (Butter.getSetup(myApplication)).equals("9") ||
+                    (Butter.getSetup(myApplication)).equals("10")) {
+
+                Check = 1;
+                fetchAd();
+
+            } else if ((Butter.getSetup(myApplication)).equals("0")) {
+
+                Check = 0;
+                fetchAd();
+
+            }
+
         }
     }
 
@@ -92,52 +130,755 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
                 if (Pizza.Server_Yes_No == 1 || Pizza.Server_Yes_No == 0) {
 
-
                     if (isAdAvailable()) {
                         return;
                     }
 
-                    if ((Butter.getSetup(myApplication)).equals("1")) {
+                    if ((Butter.getSetup(myApplication)).equals("1") ||
+                            (Butter.getSetup(myApplication)).equals("2") ||
+                            (Butter.getSetup(myApplication)).equals("3") ||
+                            (Butter.getSetup(myApplication)).equals("4") ||
+                            (Butter.getSetup(myApplication)).equals("5") ||
+                            (Butter.getSetup(myApplication)).equals("6") ||
+                            (Butter.getSetup(myApplication)).equals("7") ||
+                            (Butter.getSetup(myApplication)).equals("8") ||
+                            (Butter.getSetup(myApplication)).equals("9") ||
+                            (Butter.getSetup(myApplication)).equals("10")) {
 
-                        if (Check == 1) {
 
-                            App_Open_ID = Butter.getAO11(myApplication);
-                        } else if (Check == 2) {
+                        if ((Butter.getSetup(myApplication)).equals("1")) {
 
-                            App_Open_ID = Butter.getAO111(myApplication);
-                        } else if (Check == 3) {
+                            if (Check == 1) {
 
-                            App_Open_ID = Butter.getAO22(myApplication);
-                        } else if (Check == 4) {
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
 
-                            App_Open_ID = Butter.getAO222(myApplication);
-                        } else if (Check == 5) {
+                                    App_Open_ID = Butter.getAO11(myApplication);
 
-                            App_Open_ID = Butter.getAO33(myApplication);
-                        } else if (Check == 6) {
+                                    Butter.setAOAO1_AO(myApplication, 1);
 
-                            App_Open_ID = Butter.getAO333(myApplication);
-                            Check = 0;
-                        } else {
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 2) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 3) {
+
+                                if (Butter.getAOAO3_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO33(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO333(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 0);
+
+                                }
+
+                                Check = 0;
+
+                            }
+
+                        }
+                        if ((Butter.getSetup(myApplication)).equals("2")) {
+
+                            if (Check == 1) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 2) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 3) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 4) {
+
+                                if (Butter.getAOAO3_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO33(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO333(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 0);
+
+                                }
+
+                                Check = 0;
+
+                            }
+
+                        }
+                        if ((Butter.getSetup(myApplication)).equals("3")) {
+
+                            if (Check == 1) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 2) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 3) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 4) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 5) {
+
+                                if (Butter.getAOAO3_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO33(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO333(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 0);
+
+                                }
+
+                                Check = 0;
+
+                            }
+
+                        }
+                        if ((Butter.getSetup(myApplication)).equals("4")) {
+
+                            if (Check == 1) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 2) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 3) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 4) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 5) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 6) {
+
+                                if (Butter.getAOAO3_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO33(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO333(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 0);
+
+                                }
+
+                                Check = 0;
+
+                            }
+
+                        }
+                        if ((Butter.getSetup(myApplication)).equals("5")) {
+
+                            if (Check == 1) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 2) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 3) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 4) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 5) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 6) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 7) {
+
+                                if (Butter.getAOAO3_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO33(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO333(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 0);
+
+                                }
+
+                                Check = 0;
+
+                            }
+
+                        }
+                        if ((Butter.getSetup(myApplication)).equals("6")) {
+
+                            if (Check == 1) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 2) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 3) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 4) {
+
+                                if (Butter.getAOAO3_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO33(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO333(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 0);
+
+                                }
+
+                                Check = 0;
+
+                            }
+
+                        }
+                        if ((Butter.getSetup(myApplication)).equals("7")) {
+
+                            if (Check == 1) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 2) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 3) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 4) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 5) {
+
+                                if (Butter.getAOAO3_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO33(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO333(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 0);
+
+                                }
+
+                                Check = 0;
+
+                            }
+
+                        }
+                        if ((Butter.getSetup(myApplication)).equals("8")) {
+
+                            if (Check == 1) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 2) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 3) {
+
+                                if (Butter.getAOAO1_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO11(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO111(myApplication);
+
+                                    Butter.setAOAO1_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 4) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 5) {
+
+
+                                if (Butter.getAOAO2_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO22(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO222(myApplication);
+
+                                    Butter.setAOAO2_AO(myApplication, 0);
+
+                                }
+
+                            } else if (Check == 6) {
+
+                                if (Butter.getAOAO3_AO(myApplication) == 0) {
+
+                                    App_Open_ID = Butter.getAO33(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 1);
+
+                                } else {
+
+                                    App_Open_ID = Butter.getAO333(myApplication);
+
+                                    Butter.setAOAO3_AO(myApplication, 0);
+
+                                }
+
+                                Check = 0;
+
+                            }
 
                         }
 
 
                     } else if ((Butter.getSetup(myApplication)).equals("0")) {
 
-                        App_Open_ID = Butter.getapp_open(myApplication);
-
+                        if (Check == 0) {
+                            App_Open_ID = Butter.getapp_open(myApplication);
+                        }
 
                     }
 
                     loadCallback =
                             new AppOpenAd.AppOpenAdLoadCallback() {
 
-
                                 @Override
                                 public void onAppOpenAdLoaded(AppOpenAd ad) {
 
-                                    if ((Butter.getSetup(myApplication)).equals("1")) {
+                                    if ((Butter.getSetup(myApplication)).equals("1") ||
+                                            (Butter.getSetup(myApplication)).equals("2") ||
+                                            (Butter.getSetup(myApplication)).equals("3") ||
+                                            (Butter.getSetup(myApplication)).equals("4") ||
+                                            (Butter.getSetup(myApplication)).equals("5") ||
+                                            (Butter.getSetup(myApplication)).equals("6") ||
+                                            (Butter.getSetup(myApplication)).equals("7") ||
+                                            (Butter.getSetup(myApplication)).equals("8") ||
+                                            (Butter.getSetup(myApplication)).equals("9") ||
+                                            (Butter.getSetup(myApplication)).equals("10")) {
                                         Check = 1;
                                     } else if ((Butter.getSetup(myApplication)).equals("0")) {
                                         Check = 0;
@@ -149,10 +890,17 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
                                 @Override
                                 public void onAppOpenAdFailedToLoad(LoadAdError loadAdError) {
-                                    // Handle the error.
 
-
-                                    if ((Butter.getSetup(myApplication)).equals("1")) {
+                                    if ((Butter.getSetup(myApplication)).equals("1") ||
+                                            (Butter.getSetup(myApplication)).equals("2") ||
+                                            (Butter.getSetup(myApplication)).equals("3") ||
+                                            (Butter.getSetup(myApplication)).equals("4") ||
+                                            (Butter.getSetup(myApplication)).equals("5") ||
+                                            (Butter.getSetup(myApplication)).equals("6") ||
+                                            (Butter.getSetup(myApplication)).equals("7") ||
+                                            (Butter.getSetup(myApplication)).equals("8") ||
+                                            (Butter.getSetup(myApplication)).equals("9") ||
+                                            (Butter.getSetup(myApplication)).equals("10")) {
                                         Check = Check + 1;
                                         fetchAd();
                                     } else if ((Butter.getSetup(myApplication)).equals("0")) {
@@ -195,9 +943,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
     @OnLifecycleEvent(ON_START)
     public void onStart() {
-
         showAdIfAvailable();
-
     }
 
 
